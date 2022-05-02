@@ -95,6 +95,16 @@ namespace RemoteServer_project
         }
 
         //FUNCTIONS PART START
+        private byte[] string_to_bytes(string word)
+        {
+            return Encoding.Default.GetBytes(word);
+        }
+
+        private string bytes_to_string(byte[] bytes)
+        {
+            return Encoding.Default.GetString(bytes).Trim('\0');
+        }
+
         static string generateHexStringFromByteArray(byte[] input)
         {
             string hexString = BitConverter.ToString(input);
@@ -198,6 +208,7 @@ namespace RemoteServer_project
             aesObject.Key = key;
             // set the IV
             aesObject.IV = IV;
+
             // create an encryptor with the settings provided
             ICryptoTransform decryptor = aesObject.CreateDecryptor();
             byte[] result = null;
@@ -227,40 +238,37 @@ namespace RemoteServer_project
 
                     Byte[] buffer = new Byte[64];
                     newClient.Receive(buffer);
-                    string which_incomer = Encoding.Default.GetString(buffer);
-                    which_incomer = which_incomer.Substring(0, which_incomer.IndexOf("\0"));
+                    string which_incomer = bytes_to_string(buffer);
 
                     if(which_incomer == "client"){
                         UserSocketList.Add(newClient);
                         AllSocketList.Add(newClient);
                         logs.AppendText("A client is connected. \n");
                         string whoami = "master";
-                        byte[] whoamiByte = Encoding.Default.GetBytes(whoami);
+                        byte[] whoamiByte = string_to_bytes(whoami);
                         newClient.Send(whoamiByte);
 
                     }
 
                     else if (which_incomer == "server")
                     {
-
                         ServerSocketList.Add(newClient);
                         AllSocketList.Add(newClient);
                         logs.AppendText("A server is connected. \n");
-                        //send server key objects
-                        //Random byte generation
+ 
                         byte[] randomBytes = new byte[48];
                         randomBytes = GenerateRandomBytes(48);
-                        //Random byte generation
-                        //newClient.Send(random_bytes);
-                        string encryptMessage = Encoding.Default.GetString(randomBytes).Trim('\0');
+
+                        string encryptMessage = bytes_to_string(randomBytes);
                         byte[] encryptedRSA = encryptWithRSA(encryptMessage, 3072, Server1_pub);
-                        string encryptedRSAstring = Encoding.Default.GetString(encryptedRSA).Trim('\0');
+                        
+                        string encryptedRSAstring = bytes_to_string(encryptedRSA);
                         byte[] sessionKeySigned = signWithRSA(encryptedRSAstring, 3072, Master_pub_priv);
+                        
                         newClient.Send(encryptedRSA);
                         newClient.Send(sessionKeySigned);
 
                         logs.AppendText("New session key provided to Server \n");
-
                     }
                    
                     Thread receiveThread = new Thread(new ThreadStart(Receive));
@@ -279,12 +287,31 @@ namespace RemoteServer_project
                 }
             }
         }
+
+        private byte[] combine_list(List<byte[]> list)
+        {
+            int len = 0;
+            foreach (var bytes in list)
+            {
+                len += bytes.Length;
+            }
+
+            int currentLength = 0;
+            byte[] finalArr = new byte[len];
+            for (var i = 0; i <list.Count; i++)
+            {
+                System.Buffer.BlockCopy(list[i], 0, finalArr, currentLength, list[i].Length);
+                currentLength += list[i].Length;
+            }
+
+            return finalArr;
+        }
+
+
         private void Receive()
         {
             Socket s = AllSocketList[AllSocketList.Count - 1]; //client that is newly added
             bool connected = true;
-
-            
 
             while (!terminating && connected)
             {
@@ -293,51 +320,52 @@ namespace RemoteServer_project
                     Byte[] buffer = new Byte[64];
                     s.Receive(buffer);
 
-                    string message = Encoding.Default.GetString(buffer);
-                    message = message.Substring(0, message.IndexOf("\0"));
+                    string message = bytes_to_string(buffer);
                     logs.AppendText(message + "\n");
 
-                    if(message == "file_upload"){
+                    if(message == "file_upload")
+                    {
+                        int mb = 1000;
+                        List<byte[]> fileBytesList= new List<byte[]>();
 
-                        Byte[] combinedDataInput  = new Byte[896]; //16 MB input
+                        byte[] combinedDataInput  = new byte[mb];
                         s.Receive(combinedDataInput);
-                        logs.AppendText(combinedDataInput.Length.ToString() + "\n");
-                        byte[] AESKeyEncrypted = new byte[384];
-                        Array.Copy(combinedDataInput, 0, AESKeyEncrypted, 0, 384);
-                        byte[] AESIVEncrypted = new byte[384];
-                        Array.Copy(combinedDataInput, 384, AESIVEncrypted, 0, 384);
-                        byte[] dataEncrypted = new byte[combinedDataInput.Count() - 768];
-                        Array.Copy(combinedDataInput, 768, dataEncrypted, 0, combinedDataInput.Count() - 768);
 
-                        //RSA Decryption
-                        string AESKeyEncryptedString = Encoding.Default.GetString(AESKeyEncrypted).Trim('\0');
-                        byte[] AESKey = decryptWithRSA(AESKeyEncryptedString, 3072, Master_pub_priv);
-                        string AESIVEncryptedString = Encoding.Default.GetString(AESIVEncrypted).Trim('\0');
-                        byte[] AESIV = decryptWithRSA(AESIVEncryptedString, 3072, Master_pub_priv);
-                        //RSA Decryption
-                        //AES Decryption
-                        string dataEncryptedString = Encoding.Default.GetString(dataEncrypted).Trim('\0');
-                        byte[] Data = decryptWithAES128(dataEncryptedString, AESKey, AESIV);
-                        string DataString = Encoding.Default.GetString(Data).Trim('\0');
-                        //logs.AppendText(DataString);
+                        string filename = "";
 
-                        string[] fileArray = DataString.Split(new string[] { "---" }, StringSplitOptions.None);
-                        
-                        string filename = fileArray[0];
-                        string fileContent = fileArray[1];
-                        logs.AppendText(DataString + "\n");
-                        byte[] fileBytes = Encoding.Default.GetBytes(fileContent);
-                        using (Stream file = File.OpenWrite(Directory.GetCurrentDirectory() + "\\" + filename))
+                        while (bytes_to_string(combinedDataInput) != "*--END--*") 
                         {
-                            file.Write(fileBytes, 0, fileBytes.Length);
+                            byte[] AESKeyEncrypted = new byte[384];
+                            Array.Copy(combinedDataInput, 0, AESKeyEncrypted, 0, 384);
+                            byte[] AESIVEncrypted = new byte[384];
+                            Array.Copy(combinedDataInput, 384, AESIVEncrypted, 0, 384);
+                            byte[] dataEncrypted = new byte[combinedDataInput.Count() - 768];
+                            Array.Copy(combinedDataInput, 768, dataEncrypted, 0, combinedDataInput.Count() - 768);
+
+                            string AESKeyEncryptedString = bytes_to_string(AESKeyEncrypted);
+                            byte[] AESKey = decryptWithRSA(AESKeyEncryptedString, 3072, Master_pub_priv);
+                            string AESIVEncryptedString = bytes_to_string(AESIVEncrypted);
+                            byte[] AESIV = decryptWithRSA(AESIVEncryptedString, 3072, Master_pub_priv);
+
+                            string dataEncryptedString = bytes_to_string(dataEncrypted);
+                            byte[] Data = decryptWithAES128(dataEncryptedString, AESKey, AESIV);
+                            string DataString = bytes_to_string(Data);
+
+                            string[] fileArray = DataString.Split(new string[] { "---" }, StringSplitOptions.None);
+                            filename = fileArray[0];
+                            string fileContent = fileArray[1];
+
+                            fileBytesList.Add(string_to_bytes(fileContent));
+
+                            s.Receive(combinedDataInput);
                         }
 
-                        //AES Decryption
-
-                        //string hexdeneme = generateHexStringFromByteArray(AESKey);
-                        //logs.AppendText(hexdeneme + "\n");
+                        byte[] totalFileBytes = combine_list(fileBytesList);
+                        using (Stream file = File.OpenWrite(Directory.GetCurrentDirectory() + "\\" + filename))
+                        {
+                            file.Write(totalFileBytes, 0, totalFileBytes.Length);
+                        }
                     }
-
                 }
                 catch
                 {
@@ -352,7 +380,6 @@ namespace RemoteServer_project
                     connected = false;
                 }
             }
-
         }
 
         private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)

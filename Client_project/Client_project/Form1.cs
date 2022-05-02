@@ -124,6 +124,16 @@ namespace Client_project
         }
 
         // FUNCTIONS START //
+        private byte[] string_to_bytes(string word)
+        {
+            return Encoding.Default.GetBytes(word);
+        }
+
+        private string bytes_to_string(byte[] bytes)
+        {
+            return Encoding.Default.GetString(bytes).Trim('\0');
+        }
+
         public static byte[] GenerateRandomBytes(int length)
         {
             var rnd = new byte[length];
@@ -207,7 +217,7 @@ namespace Client_project
                     Byte[] buffer = new Byte[64];
                     clientSocket.Receive(buffer);
 
-                    string message = Encoding.Default.GetString(buffer);
+                    string message = bytes_to_string(buffer);
                     message = message.Substring(0, message.IndexOf("\0"));
 
                     logs.AppendText(message + "\n");
@@ -236,7 +246,7 @@ namespace Client_project
             if (message != "" && message.Length < 63)
             {
                 Byte[] buffer = new Byte[64];
-                buffer = Encoding.Default.GetBytes(message);
+                buffer = string_to_bytes(message);
                 clientSocket.Send(buffer);
             }
         }
@@ -248,58 +258,76 @@ namespace Client_project
             Environment.Exit(0);
         }
 
-         
+        private string get_file_name(string path)
+        {
+            var filePathList = path.Split('\\');
+           return filePathList[filePathList.Count() - 1];
+        }
+
+        private byte[] combine_byte_arrays(byte[] arr1, byte[] arr2, byte[] arr3)
+        {
+            byte[] combinedEncryptedData = new byte[arr1.Length + arr2.Length + arr3.Length];
+
+            System.Buffer.BlockCopy(arr1, 0, combinedEncryptedData, 0, arr1.Length);
+            System.Buffer.BlockCopy(arr2, 0, combinedEncryptedData, arr1.Length, arr2.Length);
+            System.Buffer.BlockCopy(arr3, 0, combinedEncryptedData, arr1.Length + arr2.Length, arr3.Length);
+
+            return combinedEncryptedData;
+        }
+
+        private byte[] parse_array(byte[] arr, int idx1, int len)
+        {
+            int lenMin = arr.Length < len ? arr.Length : len;
+            byte[] slice = new byte[lenMin];
+            System.Buffer.BlockCopy(arr, idx1, slice, 0, lenMin);
+            return slice;
+        }
 
         private void upload_button_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.Title = "Browse Text Files";
-            //openFileDialog1.ShowDialog();
   
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                //Read file to byte array
-                string filepath = openFileDialog1.FileName;
-                var filepathList = filepath.Split('\\');
-                string filename = filepathList[filepathList.Count() - 1];
-                FileStream stream = File.OpenRead(filepath);
+                string filePath = openFileDialog1.FileName;
+                string fileName = get_file_name(filePath);
+                
+                FileStream stream = File.OpenRead(filePath);
                 byte[] fileBytes = new byte[stream.Length];
-
                 stream.Read(fileBytes, 0, fileBytes.Length);
                 stream.Close();
 
                 byte[] randomAES128Key = GenerateRandomBytes(16);
                 byte[] randomAES128IV = GenerateRandomBytes(16);
 
-                string randomKeyString = Encoding.Default.GetString(randomAES128Key).Trim('\0');
-                string randomIVString = Encoding.Default.GetString(randomAES128IV).Trim('\0');
+                string randomKeyString = bytes_to_string(randomAES128Key);
+                string randomIVString = bytes_to_string(randomAES128IV);
 
-                byte[] keyEncryptedRSA = encryptWithRSA(randomKeyString, 3072, connected_pub);
-                byte[] IVEncryptedRSA = encryptWithRSA(randomIVString, 3072, connected_pub);
-                string encryptFileString = Encoding.Default.GetString(fileBytes).Trim('\0');
-                byte[] fileEncryptedAES = encryptWithAES128(encryptFileString, randomAES128Key, randomAES128IV );
-                byte[] filenameEncryptedAES = encryptWithAES128(filename + "---", randomAES128Key, randomAES128IV);
+                byte[] keyRsaEncrypted = encryptWithRSA(randomKeyString, 3072, connected_pub);
+                byte[] IVRsaEncrypted = encryptWithRSA(randomIVString, 3072, connected_pub);
 
-                byte[] combinedEncryptedData = new byte[keyEncryptedRSA.Length + IVEncryptedRSA.Length + filenameEncryptedAES.Length + fileEncryptedAES.Length];
-                System.Buffer.BlockCopy(keyEncryptedRSA, 0, combinedEncryptedData, 0, keyEncryptedRSA.Length);
-                System.Buffer.BlockCopy(IVEncryptedRSA, 0, combinedEncryptedData, keyEncryptedRSA.Length, IVEncryptedRSA.Length);
-                System.Buffer.BlockCopy(filenameEncryptedAES, 0, combinedEncryptedData, keyEncryptedRSA.Length + IVEncryptedRSA.Length, filenameEncryptedAES.Length);
-                System.Buffer.BlockCopy(fileEncryptedAES, 0, combinedEncryptedData, keyEncryptedRSA.Length + IVEncryptedRSA.Length + filenameEncryptedAES.Length, fileEncryptedAES.Length);
+                string operation = "file_upload";
+                byte[] operationBytes = string_to_bytes(operation);
+                clientSocket.Send(operationBytes);
 
-                string whatToDo = "file_upload";
-                byte[] whatToDoByte = Encoding.Default.GetBytes(whatToDo);
-                clientSocket.Send(whatToDoByte);
 
-                clientSocket.Send(combinedEncryptedData);
-                logs.AppendText(combinedEncryptedData.Length.ToString() + "\n");
-                //logs.AppendText(combinedEncryptedData.Length.ToString() + "\n");
-                string deneme = generateHexStringFromByteArray(randomAES128Key);
-                logs.AppendText(deneme + "\n");
+                int mb = 128 + 384 + 384;
+                int loopCount = (fileBytes.Length / mb) + 1;
+                for (int i = 0; i < loopCount; ++i)
+                {
+                    byte[] fileBytesSlice = parse_array(fileBytes, i * mb, mb);
+                    string fileToString = bytes_to_string(fileBytesSlice);
+                    
+                    byte[] fileAesEncrypted = encryptWithAES128(fileName + "---" + fileToString, randomAES128Key, randomAES128IV);
+                    byte[] combinedEncryptedData = combine_byte_arrays(keyRsaEncrypted, IVRsaEncrypted, fileAesEncrypted);
+                    clientSocket.Send(combinedEncryptedData);
+                }
 
-                string deneme2 = Encoding.Default.GetString(fileEncryptedAES).Trim('\0');
-                logs.AppendText(deneme2 + "\n");
+                string endToken = "*--END--*";
+                byte[] endTokenBytes = string_to_bytes(endToken);
+                clientSocket.Send(endTokenBytes); 
             }
-
         }
     }
 }

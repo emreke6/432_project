@@ -16,3 +16,14 @@ C:\Users\emrek\Desktop\CS432 Term Project\Client_project\Client_project\obj\Debu
 C:\Users\emrek\Desktop\CS432 Term Project\Client_project\Client_project\obj\Debug\Client_project.Form1.resources
 C:\Users\emrek\Desktop\CS432 Term Project\Client_project\Client_project\obj\Debug\Client_project.Properties.Resources.resources
 C:\Users\emrek\Desktop\CS432 Term Project\Client_project\Client_project\obj\Debug\Client_project.csproj.GenerateResource.Cache
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\bin\Debug\Client_project.exe.config
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\bin\Debug\Client_project.exe
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\bin\Debug\Client_project.pdb
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\obj\Debug\Client_project.csproj.AssemblyReference.cache
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\obj\Debug\Client_project.csproj.SuggestedBindingRedirects.cache
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\obj\Debug\Client_project.Form1.resources
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\obj\Debug\Client_project.Properties.Resources.resources
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\obj\Debug\Client_project.csproj.GenerateResource.cache
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\obj\Debug\Client_project.csproj.CoreCompileInputs.cache
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\obj\Debug\Client_project.exe
+C:\Users\alioz\OneDrive\Masaüstü\Batu\c432\Client_project\Client_project\obj\Debug\Client_project.pdb
