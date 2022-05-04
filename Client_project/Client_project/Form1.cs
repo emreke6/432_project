@@ -11,7 +11,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Data.SqlClient;
 
@@ -218,9 +217,8 @@ namespace Client_project
                     clientSocket.Receive(buffer);
 
                     string message = bytes_to_string(buffer);
-                    message = message.Substring(0, message.IndexOf("\0"));
-
-                    logs.AppendText(message + "\n");
+                    logs.AppendText("message: " + message + "\n");
+                    
                 }
                 catch {
                     if (!terminating)
@@ -261,23 +259,24 @@ namespace Client_project
         private string get_file_name(string path)
         {
             var filePathList = path.Split('\\');
-           return filePathList[filePathList.Count() - 1];
+            return filePathList[filePathList.Count() - 1];
         }
 
-        private byte[] combine_byte_arrays(byte[] arr1, byte[] arr2, byte[] arr3)
+        private byte[] combine_byte_arrays(byte[] arr1, byte[] arr2, byte[] arr3, byte[] arr4)
         {
-            byte[] combinedEncryptedData = new byte[arr1.Length + arr2.Length + arr3.Length];
+            byte[] combinedEncryptedData = new byte[arr1.Length + arr2.Length + arr3.Length + arr4.Length];
 
             System.Buffer.BlockCopy(arr1, 0, combinedEncryptedData, 0, arr1.Length);
             System.Buffer.BlockCopy(arr2, 0, combinedEncryptedData, arr1.Length, arr2.Length);
             System.Buffer.BlockCopy(arr3, 0, combinedEncryptedData, arr1.Length + arr2.Length, arr3.Length);
+            System.Buffer.BlockCopy(arr4, 0, combinedEncryptedData, arr1.Length + arr2.Length + arr3.Length, arr4.Length);
 
             return combinedEncryptedData;
         }
 
         private byte[] parse_array(byte[] arr, int idx1, int len)
         {
-            int lenMin = arr.Length < len ? arr.Length : len;
+            int lenMin = (arr.Length - idx1) < len ? (arr.Length - idx1) : len;
             byte[] slice = new byte[lenMin];
             System.Buffer.BlockCopy(arr, idx1, slice, 0, lenMin);
             return slice;
@@ -309,24 +308,29 @@ namespace Client_project
 
                 string operation = "file_upload";
                 byte[] operationBytes = string_to_bytes(operation);
+                
                 clientSocket.Send(operationBytes);
 
 
-                int mb = 128 + 384 + 384;
+                int mb = 512;
                 int loopCount = (fileBytes.Length / mb) + 1;
-                for (int i = 0; i < loopCount; ++i)
+                for (int i = 0; i < loopCount; i++)
                 {
                     byte[] fileBytesSlice = parse_array(fileBytes, i * mb, mb);
                     string fileToString = bytes_to_string(fileBytesSlice);
-                    
+
                     byte[] fileAesEncrypted = encryptWithAES128(fileName + "---" + fileToString, randomAES128Key, randomAES128IV);
-                    byte[] combinedEncryptedData = combine_byte_arrays(keyRsaEncrypted, IVRsaEncrypted, fileAesEncrypted);
+                    byte[] size = encryptWithRSA(fileAesEncrypted.Length.ToString(), 3072, connected_pub);
+
+                    byte[] combinedEncryptedData = combine_byte_arrays(keyRsaEncrypted, IVRsaEncrypted, size, fileAesEncrypted);
                     clientSocket.Send(combinedEncryptedData);
+
+                    Array.Clear(size, 0, size.Length);
                 }
 
-                string endToken = "*--END--*";
-                byte[] endTokenBytes = string_to_bytes(endToken);
-                clientSocket.Send(endTokenBytes); 
+                byte[] endToken = string_to_bytes("*--END--*");
+                clientSocket.Send(endToken);
+                
             }
         }
     }

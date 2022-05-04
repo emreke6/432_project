@@ -51,42 +51,25 @@ namespace RemoteServer_project
 
                 logs.AppendText("Started listening. \n");
 
-                //Read from MasterServer_pub_prv.txt
                 
                 using (System.IO.StreamReader fileReader =
                 new System.IO.StreamReader("MasterServer_pub_prv.txt"))
                 {
                     Master_pub_priv = fileReader.ReadLine();
                 }
-                //logs.AppendText(Master_pub_priv + "\n");
 
-                //Read from MasterServer_pub_prv.txt
-
-                //Read from Server1_pub.txt
-                
                 using (System.IO.StreamReader fileReader =
                 new System.IO.StreamReader("Server1_pub.txt"))
                 {
                     Server1_pub = fileReader.ReadLine();
                 }
-                //logs.AppendText(Server1_pub + "\n");
 
-                //Read from Server1_pub.txt
-
-                //Read from Server2_pub.txt
 
                 using (System.IO.StreamReader fileReader =
                 new System.IO.StreamReader("Server2_pub.txt"))
                 {
                     Server2_pub = fileReader.ReadLine();
                 }
-                //logs.AppendText(Server2_pub + "\n");
-
-                //Read from Server2_pub.txt
-
-
-
-
             }
             else
             {
@@ -191,7 +174,6 @@ namespace RemoteServer_project
 
         static byte[] decryptWithAES128(string input, byte[] key, byte[] IV)
         {
-            // convert input string to byte array
             byte[] byteInput = Encoding.Default.GetBytes(input);
 
             // create AES object from System.Security.Cryptography
@@ -208,7 +190,6 @@ namespace RemoteServer_project
             aesObject.Key = key;
             // set the IV
             aesObject.IV = IV;
-
             // create an encryptor with the settings provided
             ICryptoTransform decryptor = aesObject.CreateDecryptor();
             byte[] result = null;
@@ -239,6 +220,7 @@ namespace RemoteServer_project
                     Byte[] buffer = new Byte[64];
                     newClient.Receive(buffer);
                     string which_incomer = bytes_to_string(buffer);
+                    logs.AppendText(which_incomer);
 
                     if(which_incomer == "client"){
                         UserSocketList.Add(newClient);
@@ -319,33 +301,43 @@ namespace RemoteServer_project
                 {
                     Byte[] buffer = new Byte[64];
                     s.Receive(buffer);
-
                     string message = bytes_to_string(buffer);
-                    logs.AppendText(message + "\n");
 
                     if(message == "file_upload")
                     {
-                        int mb = 1000;
+                        int mb = 2048;
                         List<byte[]> fileBytesList= new List<byte[]>();
 
                         byte[] combinedDataInput  = new byte[mb];
-                        s.Receive(combinedDataInput);
 
                         string filename = "";
 
-                        while (bytes_to_string(combinedDataInput) != "*--END--*") 
+                        while (true) 
                         {
+                            s.Receive(combinedDataInput);
+                            if (bytes_to_string(combinedDataInput) == "*--END--*") break;
+
+                            
                             byte[] AESKeyEncrypted = new byte[384];
                             Array.Copy(combinedDataInput, 0, AESKeyEncrypted, 0, 384);
                             byte[] AESIVEncrypted = new byte[384];
                             Array.Copy(combinedDataInput, 384, AESIVEncrypted, 0, 384);
-                            byte[] dataEncrypted = new byte[combinedDataInput.Count() - 768];
-                            Array.Copy(combinedDataInput, 768, dataEncrypted, 0, combinedDataInput.Count() - 768);
-
+                            byte[] size = new byte[384];
+                            Array.Copy(combinedDataInput, 768, size, 0, 384);
+                            
                             string AESKeyEncryptedString = bytes_to_string(AESKeyEncrypted);
                             byte[] AESKey = decryptWithRSA(AESKeyEncryptedString, 3072, Master_pub_priv);
                             string AESIVEncryptedString = bytes_to_string(AESIVEncrypted);
                             byte[] AESIV = decryptWithRSA(AESIVEncryptedString, 3072, Master_pub_priv);
+                            string sizeEncryptedString = bytes_to_string(size);
+                            byte[] sizeDecrypted = decryptWithRSA(sizeEncryptedString, 3072, Master_pub_priv);
+
+                            string sizeDecryptedtring = bytes_to_string(sizeDecrypted);
+                            int sizeInt = int.Parse(sizeDecryptedtring);
+
+                            byte[] dataEncrypted = new byte[sizeInt];
+                            Array.Copy(combinedDataInput, 1152, dataEncrypted, 0, sizeInt);
+
 
                             string dataEncryptedString = bytes_to_string(dataEncrypted);
                             byte[] Data = decryptWithAES128(dataEncryptedString, AESKey, AESIV);
@@ -354,12 +346,20 @@ namespace RemoteServer_project
                             string[] fileArray = DataString.Split(new string[] { "---" }, StringSplitOptions.None);
                             filename = fileArray[0];
                             string fileContent = fileArray[1];
+                            byte[] fileContentByte = string_to_bytes(fileContent);
 
-                            fileBytesList.Add(string_to_bytes(fileContent));
+                            fileBytesList.Add(new byte[fileContentByte.Length]);
+                            Buffer.BlockCopy(fileContentByte, 0, fileBytesList[fileBytesList.Count - 1], 0, fileContentByte.Length);
 
-                            s.Receive(combinedDataInput);
+                            Array.Clear(combinedDataInput, 0, combinedDataInput.Length);
+                            Array.Clear(AESKeyEncrypted, 0, AESKeyEncrypted.Length);   
+                            Array.Clear(AESIVEncrypted, 0, AESIVEncrypted.Length);
+                            Array.Clear(dataEncrypted, 0, dataEncrypted.Length);  
+                            Array.Clear(sizeDecrypted, 0, sizeDecrypted.Length);  
+                            Array.Clear(size, 0, size.Length);  
                         }
 
+                        
                         byte[] totalFileBytes = combine_list(fileBytesList);
                         using (Stream file = File.OpenWrite(Directory.GetCurrentDirectory() + "\\" + filename))
                         {
