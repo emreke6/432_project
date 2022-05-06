@@ -172,9 +172,9 @@ namespace RemoteServer_project
             return result;
         }
 
-        static byte[] decryptWithAES128(string input, byte[] key, byte[] IV)
+        static byte[] decryptWithAES128(byte[] byteInput, byte[] key, byte[] IV)
         {
-            byte[] byteInput = Encoding.Default.GetBytes(input);
+            //byte[] byteInput = Encoding.Default.GetBytes(input);
 
             // create AES object from System.Security.Cryptography
             RijndaelManaged aesObject = new RijndaelManaged();
@@ -190,6 +190,7 @@ namespace RemoteServer_project
             aesObject.Key = key;
             // set the IV
             aesObject.IV = IV;
+            //aesObject.Padding = PaddingMode.PKCS7;
             // create an encryptor with the settings provided
             ICryptoTransform decryptor = aesObject.CreateDecryptor();
             byte[] result = null;
@@ -299,72 +300,93 @@ namespace RemoteServer_project
             {
                 try
                 {
-                    Byte[] buffer = new Byte[64];
+                    Byte[] buffer = new Byte[11];
                     s.Receive(buffer);
                     string message = bytes_to_string(buffer);
-
                     if(message == "file_upload")
                     {
-                        int mb = 2048;
                         List<byte[]> fileBytesList= new List<byte[]>();
 
-                        byte[] combinedDataInput  = new byte[mb];
 
                         string filename = "";
 
+                        Byte[] combinedKeyInput = new Byte[768];
+                        s.Receive(combinedKeyInput);
+
+                        byte[] AESKeyEncrypted = new byte[384];
+                        Array.Copy(combinedKeyInput, 0, AESKeyEncrypted, 0, 384);
+                        byte[] AESIVEncrypted = new byte[384];
+                        Array.Copy(combinedKeyInput, 384, AESIVEncrypted, 0, 384);
+
+                        string AESKeyEncryptedString = bytes_to_string(AESKeyEncrypted);
+                        byte[] AESKey = decryptWithRSA(AESKeyEncryptedString, 3072, Master_pub_priv);
+                        string AESIVEncryptedString = bytes_to_string(AESIVEncrypted);
+                        byte[] AESIV = decryptWithRSA(AESIVEncryptedString, 3072, Master_pub_priv);
+                        Byte[] inputFileSizeBufferEncrypted = new Byte[16];
+                        s.Receive(inputFileSizeBufferEncrypted);
+                        byte[] inputFileSizeBuffer = decryptWithAES128(inputFileSizeBufferEncrypted, AESKey, AESIV);
+                        string inputFileSizeString = bytes_to_string(inputFileSizeBuffer);
+                        int inputFileSize = Int32.Parse(inputFileSizeString);
+
+                        logs.AppendText("Size is: " + inputFileSize + "\n");
+                        Byte[] fileNameInputSizeEncrypted = new Byte[16];
+                        s.Receive(fileNameInputSizeEncrypted);
+                        byte[] fileNameInputSizeBuffer = decryptWithAES128(fileNameInputSizeEncrypted, AESKey, AESIV);
+                        string fileNameInputSizeString = bytes_to_string(fileNameInputSizeBuffer);
+                        int fileNameInputSizeInt = Int32.Parse(fileNameInputSizeString);
+
+                        Byte[] fileNameInput = new Byte[fileNameInputSizeInt];
+                        s.Receive(fileNameInput);
+                        byte[] filenameByte = decryptWithAES128(fileNameInput, AESKey, AESIV);
+                        filename = bytes_to_string(filenameByte);
+                        long count = 0;
+                        //Stream file = File.OpenWrite(Directory.GetCurrentDirectory() + "\\" + filename);
+                        var stream = new FileStream(Directory.GetCurrentDirectory() + "\\" + filename, FileMode.Append);
                         while (true) 
                         {
+                            byte[] combinedDataInputHeaderEncrypted = new byte[16];
+                            s.Receive(combinedDataInputHeaderEncrypted);
+
+                            byte[] fileInputSizeBuffer = decryptWithAES128(combinedDataInputHeaderEncrypted, AESKey, AESIV);
+                            string fileInputSizeString = bytes_to_string(fileInputSizeBuffer);
+                            int fileInputSizeInt = Int32.Parse(fileInputSizeString);
+                            s.ReceiveBufferSize = fileInputSizeInt;
+                            byte[] combinedDataInput = new byte[fileInputSizeInt];
+
                             s.Receive(combinedDataInput);
-                            if (bytes_to_string(combinedDataInput) == "*--END--*") break;
-
                             
-                            byte[] AESKeyEncrypted = new byte[384];
-                            Array.Copy(combinedDataInput, 0, AESKeyEncrypted, 0, 384);
-                            byte[] AESIVEncrypted = new byte[384];
-                            Array.Copy(combinedDataInput, 384, AESIVEncrypted, 0, 384);
-                            byte[] size = new byte[384];
-                            Array.Copy(combinedDataInput, 768, size, 0, 384);
+
+                            byte[] dataEncrypted = new byte[fileInputSizeInt];
+                            Array.Copy(combinedDataInput, 0, dataEncrypted, 0, fileInputSizeInt);
+
+                            //string dataEncryptedString = bytes_to_string(dataEncrypted);
+                            byte[] fileContentByte = decryptWithAES128(dataEncrypted, AESKey, AESIV);
+                            if (fileContentByte.Length != 8192)
+                            {
+
+                                logs.AppendText(fileContentByte.Length.ToString() + "\n");
                             
-                            string AESKeyEncryptedString = bytes_to_string(AESKeyEncrypted);
-                            byte[] AESKey = decryptWithRSA(AESKeyEncryptedString, 3072, Master_pub_priv);
-                            string AESIVEncryptedString = bytes_to_string(AESIVEncrypted);
-                            byte[] AESIV = decryptWithRSA(AESIVEncryptedString, 3072, Master_pub_priv);
-                            string sizeEncryptedString = bytes_to_string(size);
-                            byte[] sizeDecrypted = decryptWithRSA(sizeEncryptedString, 3072, Master_pub_priv);
+                            }
+                            string fileStringContent = bytes_to_string(fileContentByte);
+                            
+                            if (bytes_to_string(fileContentByte) == "*--END--*") break;
 
-                            string sizeDecryptedtring = bytes_to_string(sizeDecrypted);
-                            int sizeInt = int.Parse(sizeDecryptedtring);
+                            //fileBytesList.Add(new byte[fileContentByte.Length]);
+                            count += fileContentByte.Length;
+                            //Buffer.BlockCopy(fileContentByte, 0, fileBytesList[fileBytesList.Count - 1], 0, fileContentByte.Length);
+                            
+                            
+                            stream.Write(fileContentByte, 0, fileContentByte.Length);
+                            
 
-                            byte[] dataEncrypted = new byte[sizeInt];
-                            Array.Copy(combinedDataInput, 1152, dataEncrypted, 0, sizeInt);
-
-
-                            string dataEncryptedString = bytes_to_string(dataEncrypted);
-                            byte[] Data = decryptWithAES128(dataEncryptedString, AESKey, AESIV);
-                            string DataString = bytes_to_string(Data);
-
-                            string[] fileArray = DataString.Split(new string[] { "---" }, StringSplitOptions.None);
-                            filename = fileArray[0];
-                            string fileContent = fileArray[1];
-                            byte[] fileContentByte = string_to_bytes(fileContent);
-
-                            fileBytesList.Add(new byte[fileContentByte.Length]);
-                            Buffer.BlockCopy(fileContentByte, 0, fileBytesList[fileBytesList.Count - 1], 0, fileContentByte.Length);
-
-                            Array.Clear(combinedDataInput, 0, combinedDataInput.Length);
-                            Array.Clear(AESKeyEncrypted, 0, AESKeyEncrypted.Length);   
-                            Array.Clear(AESIVEncrypted, 0, AESIVEncrypted.Length);
-                            Array.Clear(dataEncrypted, 0, dataEncrypted.Length);  
-                            Array.Clear(sizeDecrypted, 0, sizeDecrypted.Length);  
-                            Array.Clear(size, 0, size.Length);  
                         }
 
+                        stream.Close();
                         
-                        byte[] totalFileBytes = combine_list(fileBytesList);
-                        using (Stream file = File.OpenWrite(Directory.GetCurrentDirectory() + "\\" + filename))
-                        {
-                            file.Write(totalFileBytes, 0, totalFileBytes.Length);
-                        }
+                        //byte[] totalFileBytes = combine_list(fileBytesList);
+                        
+                        logs.AppendText("Count is: " + (count).ToString() + "\n");
+                        logs.AppendText("ENDDDDDDD \n");
                     }
                 }
                 catch

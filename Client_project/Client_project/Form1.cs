@@ -211,6 +211,7 @@ namespace Client_project
         {
             while (connected)
             {
+                /*
                 try
                 {
                     Byte[] buffer = new Byte[64];
@@ -229,6 +230,7 @@ namespace Client_project
                     clientSocket.Close();
                     connected = false;
                 }
+                 * */
             }
         }
 
@@ -262,14 +264,13 @@ namespace Client_project
             return filePathList[filePathList.Count() - 1];
         }
 
-        private byte[] combine_byte_arrays(byte[] arr1, byte[] arr2, byte[] arr3, byte[] arr4)
+        private byte[] combine_byte_arrays(byte[] arr1, byte[] arr2)
         {
-            byte[] combinedEncryptedData = new byte[arr1.Length + arr2.Length + arr3.Length + arr4.Length];
+            byte[] combinedEncryptedData = new byte[arr1.Length + arr2.Length];
 
             System.Buffer.BlockCopy(arr1, 0, combinedEncryptedData, 0, arr1.Length);
             System.Buffer.BlockCopy(arr2, 0, combinedEncryptedData, arr1.Length, arr2.Length);
-            System.Buffer.BlockCopy(arr3, 0, combinedEncryptedData, arr1.Length + arr2.Length, arr3.Length);
-            System.Buffer.BlockCopy(arr4, 0, combinedEncryptedData, arr1.Length + arr2.Length + arr3.Length, arr4.Length);
+            //System.Buffer.BlockCopy(arr3, 0, combinedEncryptedData, arr1.Length + arr2.Length, arr3.Length);
 
             return combinedEncryptedData;
         }
@@ -289,6 +290,7 @@ namespace Client_project
   
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                
                 string filePath = openFileDialog1.FileName;
                 string fileName = get_file_name(filePath);
                 
@@ -307,30 +309,75 @@ namespace Client_project
                 byte[] IVRsaEncrypted = encryptWithRSA(randomIVString, 3072, connected_pub);
 
                 string operation = "file_upload";
-                byte[] operationBytes = string_to_bytes(operation);
-                
-                clientSocket.Send(operationBytes);
+                byte[] operationBytes = new byte[11];
+                operationBytes = string_to_bytes(operation);
+
+                clientSocket.Send(operationBytes);        
+
+                int mb = 8192;
 
 
-                int mb = 512;
+
+                byte[] combinedEncryptedKey = new byte[768];
+                combinedEncryptedKey = combine_byte_arrays(keyRsaEncrypted, IVRsaEncrypted);
+                clientSocket.Send(combinedEncryptedKey);
+
+                byte[] filenameAesEncrypted = encryptWithAES128(fileName, randomAES128Key, randomAES128IV);
+
+                string operationFileByte = (fileBytes.Length).ToString();
+                byte[] encryptedFileByteBytes = encryptWithAES128(operationFileByte, randomAES128Key, randomAES128IV);
+
+                clientSocket.Send(encryptedFileByteBytes);
+
+
+                byte[] FilenameHeader = new byte[32];
+                FilenameHeader = string_to_bytes(filenameAesEncrypted.Length.ToString());
+                string FileNameHeaderString = bytes_to_string(FilenameHeader);
+                byte[] fileNameHeaderEncrypted = encryptWithAES128(FileNameHeaderString, randomAES128Key, randomAES128IV);
+                clientSocket.Send(fileNameHeaderEncrypted);
+
+                clientSocket.Send(filenameAesEncrypted);
+
                 int loopCount = (fileBytes.Length / mb) + 1;
+                logs.AppendText("loop mb is: " + (loopCount * mb).ToString() + "\n");
+                long count = 0;
                 for (int i = 0; i < loopCount; i++)
                 {
                     byte[] fileBytesSlice = parse_array(fileBytes, i * mb, mb);
+                    count += fileBytesSlice.Length;
                     string fileToString = bytes_to_string(fileBytesSlice);
 
-                    byte[] fileAesEncrypted = encryptWithAES128(fileName + "---" + fileToString, randomAES128Key, randomAES128IV);
-                    byte[] size = encryptWithRSA(fileAesEncrypted.Length.ToString(), 3072, connected_pub);
+                    byte[] EncryptedData = encryptWithAES128(fileToString, randomAES128Key, randomAES128IV);
 
-                    byte[] combinedEncryptedData = combine_byte_arrays(keyRsaEncrypted, IVRsaEncrypted, size, fileAesEncrypted);
-                    clientSocket.Send(combinedEncryptedData);
+                    byte[] DataHeader = new byte[4];
+                    DataHeader = string_to_bytes(EncryptedData.Length.ToString());
+                    string DataHeaderString = bytes_to_string(DataHeader);
+                    byte[] dataHeaderEncrypted = encryptWithAES128(DataHeaderString, randomAES128Key, randomAES128IV);
 
-                    Array.Clear(size, 0, size.Length);
+                    clientSocket.Send(dataHeaderEncrypted);
+                    if(EncryptedData.Length != 8208)
+                    {
+                        logs.AppendText(EncryptedData.Length.ToString() + "\n");
+                    }
+                    clientSocket.SendBufferSize = EncryptedData.Length;
+                    clientSocket.Send(EncryptedData);
+
                 }
+                logs.AppendText("LoopCount is: " + (loopCount).ToString() + "\n");
+                logs.AppendText("Count is: " + (count).ToString() + "\n");
 
-                byte[] endToken = string_to_bytes("*--END--*");
-                clientSocket.Send(endToken);
                 
+                byte[] endToken = string_to_bytes("*--END--*");
+                string endTokenString = "*--END--*";
+          
+                byte[] endTokenEncrypted = encryptWithAES128(endTokenString, randomAES128Key, randomAES128IV);
+
+                byte[] endTokenLengthEncrypted = new byte[4];
+                string endTokenEncryptedLengthString = endTokenEncrypted.Length.ToString();
+                endTokenLengthEncrypted = encryptWithAES128(endTokenEncryptedLengthString, randomAES128Key, randomAES128IV);
+
+                clientSocket.Send(endTokenLengthEncrypted);
+                clientSocket.Send(endTokenEncrypted);
             }
         }
     }
