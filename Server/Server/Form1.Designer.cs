@@ -44,7 +44,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(17, 196);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(24, 17);
+            this.label1.Size = new System.Drawing.Size(22, 16);
             this.label1.TabIndex = 0;
             this.label1.Text = "IP:";
             // 
@@ -60,7 +60,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(17, 236);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(38, 17);
+            this.label2.Size = new System.Drawing.Size(34, 16);
             this.label2.TabIndex = 2;
             this.label2.Text = "Port:";
             // 
@@ -86,7 +86,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(20, 33);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(38, 17);
+            this.label3.Size = new System.Drawing.Size(34, 16);
             this.label3.TabIndex = 5;
             this.label3.Text = "Port:";
             // 
@@ -111,7 +111,7 @@
             // 
             this.logs.Location = new System.Drawing.Point(191, 30);
             this.logs.Name = "logs";
-            this.logs.Size = new System.Drawing.Size(194, 267);
+            this.logs.Size = new System.Drawing.Size(320, 267);
             this.logs.TabIndex = 9;
             this.logs.Text = "";
             // 
@@ -119,7 +119,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(397, 341);
+            this.ClientSize = new System.Drawing.Size(523, 341);
             this.Controls.Add(this.logs);
             this.Controls.Add(this.listenButton);
             this.Controls.Add(this.clientPort);
@@ -130,7 +130,7 @@
             this.Controls.Add(this.ipAdress);
             this.Controls.Add(this.label1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Server 1";
             this.ResumeLayout(false);
             this.PerformLayout();
 
