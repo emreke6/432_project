@@ -502,7 +502,6 @@ namespace Server
                     s.Receive(buffer);
 
                     string message = bytes_to_string(buffer);
-                    logs.AppendText(message + "\n");
                     if (message == "")
                     {
                         connected = false;
@@ -524,99 +523,115 @@ namespace Server
                         byte[] AESIVEncrypted = new byte[384];
                         Array.Copy(combinedKeyInput, 384, AESIVEncrypted, 0, 384);
 
-                        byte[] AESKey = decryptWithRSA(AESKeyEncrypted, 3072, Server1_pub_priv);
-                        byte[] AESIV = decryptWithRSA(AESIVEncrypted, 3072, Server1_pub_priv);
-
-                        logs.AppendText("\n\nKey and IV created for aes128 encryption:\n");
-                        logs.AppendText("Key: " + generateHexStringFromByteArray(AESKey) + "\n");
-                        logs.AppendText("IV: " + generateHexStringFromByteArray(AESIV) + "\n\n\n");
-
-                        Byte[] inputFileSizeBufferEncrypted = new Byte[16];
-                        s.Receive(inputFileSizeBufferEncrypted);
-
-                        byte[] inputFileSizeBuffer = decryptWithAES128(inputFileSizeBufferEncrypted, AESKey, AESIV);
-                        string inputFileSizeString = bytes_to_string(inputFileSizeBuffer);
-                        int inputFileSize = Int32.Parse(inputFileSizeString);
-
-                        Byte[] fileNameInputSizeEncrypted = new Byte[16];
-                        s.Receive(fileNameInputSizeEncrypted);
-                        byte[] fileNameInputSizeBuffer = decryptWithAES128(fileNameInputSizeEncrypted, AESKey, AESIV);
-                        string fileNameInputSizeString = bytes_to_string(fileNameInputSizeBuffer);
-                        int fileNameInputSizeInt = Int32.Parse(fileNameInputSizeString);
-
-                        Byte[] fileNameInput = new Byte[fileNameInputSizeInt];
-                        s.Receive(fileNameInput);
-                        byte[] filenameByte = decryptWithAES128(fileNameInput, AESKey, AESIV);
-                        filename = bytes_to_string(filenameByte);
-
-                        logs.AppendText("Started receiving " + filename + " from client with size of " + inputFileSizeString + ".\n");
-
-                        var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
-                        bool totalVerify = true;
-                        while (true)
+                        try
                         {
-                            byte[] combinedDataInputHeaderEncrypted = new byte[16];
-                            s.Receive(combinedDataInputHeaderEncrypted);
+                            byte[] AESKey = decryptWithRSA(AESKeyEncrypted, 3072, Server1_pub_priv);
+                            byte[] AESIV = decryptWithRSA(AESIVEncrypted, 3072, Server1_pub_priv);
 
-                            byte[] fileInputSizeBuffer = decryptWithAES128(combinedDataInputHeaderEncrypted, AESKey, AESIV);
-                            string fileInputSizeString = bytes_to_string(fileInputSizeBuffer);
-                            int fileInputSizeInt = Int32.Parse(fileInputSizeString);
+                            logs.AppendText("\n\nKey and IV created for aes128 encryption:\n");
+                            logs.AppendText("Key: " + generateHexStringFromByteArray(AESKey) + "\n");
+                            logs.AppendText("IV: " + generateHexStringFromByteArray(AESIV) + "\n\n\n");
 
-                            byte[] combinedDataInput = new byte[fileInputSizeInt];
+                            Byte[] inputFileSizeBufferEncrypted = new Byte[16];
+                            s.Receive(inputFileSizeBufferEncrypted);
 
-                            s.Receive(combinedDataInput);
+                            byte[] inputFileSizeBuffer = decryptWithAES128(inputFileSizeBufferEncrypted, AESKey, AESIV);
+                            string inputFileSizeString = bytes_to_string(inputFileSizeBuffer);
+                            int inputFileSize = Int32.Parse(inputFileSizeString);
 
+                            Byte[] fileNameInputSizeEncrypted = new Byte[16];
+                            s.Receive(fileNameInputSizeEncrypted);
+                            byte[] fileNameInputSizeBuffer = decryptWithAES128(fileNameInputSizeEncrypted, AESKey, AESIV);
+                            string fileNameInputSizeString = bytes_to_string(fileNameInputSizeBuffer);
+                            int fileNameInputSizeInt = Int32.Parse(fileNameInputSizeString);
 
-                            byte[] dataEncrypted = new byte[fileInputSizeInt];
-                            Array.Copy(combinedDataInput, 0, dataEncrypted, 0, fileInputSizeInt);
+                            Byte[] fileNameInput = new Byte[fileNameInputSizeInt];
+                            s.Receive(fileNameInput);
+                            byte[] filenameByte = decryptWithAES128(fileNameInput, AESKey, AESIV);
+                            filename = bytes_to_string(filenameByte);
 
-                            byte[] fileContentByte = decryptWithAES128(dataEncrypted, AESKey, AESIV);
+                            logs.AppendText("Started receiving " + filename + " from client with size of " + inputFileSizeString + ".\n");
 
-                            string fileStringContent = bytes_to_string(fileContentByte);
-
-                            if (bytes_to_string(fileContentByte) == "*--ERR--*")
+                            var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
+                            bool totalVerify = true;
+                            while (true)
                             {
-                                totalVerify = false;
-                                break;
+                                byte[] combinedDataInputHeaderEncrypted = new byte[16];
+                                s.Receive(combinedDataInputHeaderEncrypted);
+
+                                byte[] fileInputSizeBuffer = decryptWithAES128(combinedDataInputHeaderEncrypted, AESKey, AESIV);
+                                string fileInputSizeString = bytes_to_string(fileInputSizeBuffer);
+                                int fileInputSizeInt = Int32.Parse(fileInputSizeString);
+
+                                byte[] combinedDataInput = new byte[fileInputSizeInt];
+
+                                s.Receive(combinedDataInput);
+
+
+                                byte[] dataEncrypted = new byte[fileInputSizeInt];
+                                Array.Copy(combinedDataInput, 0, dataEncrypted, 0, fileInputSizeInt);
+
+                                byte[] fileContentByte = decryptWithAES128(dataEncrypted, AESKey, AESIV);
+
+                                string fileStringContent = bytes_to_string(fileContentByte);
+
+                                if (bytes_to_string(fileContentByte) == "*--ERR--*")
+                                {
+                                    totalVerify = false;
+                                    break;
+                                }
+
+                                if (bytes_to_string(fileContentByte) == "*--END--*") break;
+
+                                byte[] fileSigned = signWithRSA(fileContentByte, 3072, Server1_pub_priv);
+
+                                byte[] fileSignedLength = new byte[4];
+                                fileSignedLength = string_to_bytes(fileSigned.Length.ToString());
+                                byte[] fileSignedLengthEncrypted = encryptWithAES128(fileSignedLength, AESKey, AESIV);
+
+                                s.Send(fileSignedLengthEncrypted);
+
+                                s.Send(fileSigned);
+
+                                Console.WriteLine(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                                stream.Write(fileContentByte, 0, fileContentByte.Length);
                             }
 
-                            if (bytes_to_string(fileContentByte) == "*--END--*") break;
+                            stream.Close();
 
-                            byte[] fileSigned = signWithRSA(fileContentByte, 3072, Server1_pub_priv);
+                            if (totalVerify == false)
+                            {
+                                logs.AppendText("There is an error in verification for the file:" + filename + "\n");
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                            }
 
-                            byte[] fileSignedLength = new byte[4];
-                            fileSignedLength = string_to_bytes(fileSigned.Length.ToString());
-                            byte[] fileSignedLengthEncrypted = encryptWithAES128(fileSignedLength, AESKey, AESIV);
+                            else
+                            {
 
-                            s.Send(fileSignedLengthEncrypted);
+                                logs.AppendText("All file packets for the " + filename + " file was succesfully verified. \n");
+                                logs.AppendText(filename + " was succesfully received and stored in the File Sytem. \n");
 
-                            s.Send(fileSigned);
+                                //FOR PROJECT PART 2 //
 
-                            Console.WriteLine(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
-                            stream.Write(fileContentByte, 0, fileContentByte.Length);
+                               // send_replicate(remoteSocket, filename, Master_pub);
+                               // send_replicate(server2Socket, filename, Server2_pub);
+
+                                //FOR PROJECT PART 2 //
+                            }
                         }
-
-                        stream.Close();
-
-                        if (totalVerify == false)
+                        catch 
                         {
-                            logs.AppendText("There is an error in verification for the file:" + filename + "\n");
-                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                            logs.AppendText("There is an error in decryption process for the file \n");
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename))
+                            {
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                            }
+                            string messageError = "Decryption_Error";
+                            byte[] messageByte = new byte[16];
+                            messageByte = string_to_bytes(messageError);
+                            s.Send(messageByte);
                         }
-
-                        else
-                        {
-                            
-                            logs.AppendText("All file packets for the " + filename + " file was succesfully verified. \n");
-                            logs.AppendText(filename + " was succesfully received and stored in the File Sytem. \n");
-
-                            //FOR PROJECT PART 2 //
-
-                            send_replicate(remoteSocket,filename,Master_pub);
-                            send_replicate(server2Socket,filename, Server2_pub);
-
-                            //FOR PROJECT PART 2 //
-                        }
+                        
 
 
 
