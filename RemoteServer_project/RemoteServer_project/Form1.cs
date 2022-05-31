@@ -853,7 +853,7 @@ namespace RemoteServer_project
                             Byte[] inputFileSizeBufferEncrypted = new Byte[16];
                             s.Receive(inputFileSizeBufferEncrypted);
 
-                            AESKey = AESIV;
+
                             byte[] inputFileSizeBuffer = decryptWithAES128(inputFileSizeBufferEncrypted, AESKey, AESIV);
                             string inputFileSizeString = bytes_to_string(inputFileSizeBuffer);
                             int inputFileSize = Int32.Parse(inputFileSizeString);
