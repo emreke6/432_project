@@ -36,9 +36,10 @@
             // 
             // listen_button
             // 
-            this.listen_button.Location = new System.Drawing.Point(37, 131);
+            this.listen_button.Location = new System.Drawing.Point(49, 161);
+            this.listen_button.Margin = new System.Windows.Forms.Padding(4);
             this.listen_button.Name = "listen_button";
-            this.listen_button.Size = new System.Drawing.Size(75, 23);
+            this.listen_button.Size = new System.Drawing.Size(100, 28);
             this.listen_button.TabIndex = 0;
             this.listen_button.Text = "Listen";
             this.listen_button.UseVisualStyleBackColor = true;
@@ -46,39 +47,44 @@
             // 
             // port
             // 
-            this.port.Location = new System.Drawing.Point(37, 75);
+            this.port.Location = new System.Drawing.Point(49, 92);
+            this.port.Margin = new System.Windows.Forms.Padding(4);
             this.port.Name = "port";
-            this.port.Size = new System.Drawing.Size(90, 20);
+            this.port.Size = new System.Drawing.Size(119, 22);
             this.port.TabIndex = 1;
+            this.port.TextChanged += new System.EventHandler(this.port_TextChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 78);
+            this.label1.Location = new System.Drawing.Point(3, 96);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 13);
+            this.label1.Size = new System.Drawing.Size(38, 17);
             this.label1.TabIndex = 2;
             this.label1.Text = "Port:";
             // 
             // logs
             // 
-            this.logs.Location = new System.Drawing.Point(148, 12);
+            this.logs.Location = new System.Drawing.Point(197, 15);
+            this.logs.Margin = new System.Windows.Forms.Padding(4);
             this.logs.Name = "logs";
-            this.logs.Size = new System.Drawing.Size(124, 215);
+            this.logs.Size = new System.Drawing.Size(294, 264);
             this.logs.TabIndex = 3;
             this.logs.Text = "";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(504, 321);
             this.Controls.Add(this.logs);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.port);
             this.Controls.Add(this.listen_button);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Master Server";
             this.ResumeLayout(false);
             this.PerformLayout();
 
