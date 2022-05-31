@@ -56,3 +56,6 @@ C:\Users\emrek\Desktop\432_project_son\Server\Server2\Server2\obj\Debug\Server2.
 C:\Users\emrek\Desktop\432_project_son\Server\Server2\Server2\obj\Debug\Server2.Form1.resources
 C:\Users\emrek\Desktop\432_project_son\Server\Server2\Server2\obj\Debug\Server2.Properties.Resources.resources
 C:\Users\emrek\Desktop\432_project_son\Server\Server2\Server2\obj\Debug\Server2.csproj.GenerateResource.Cache
+C:\Users\eyupb\Desktop\Burak432\432_project\Server2\Server2\bin\Debug\Server2.exe.config
+C:\Users\eyupb\Desktop\Burak432\432_project\Server2\Server2\obj\Debug\Server2.exe
+C:\Users\eyupb\Desktop\Burak432\432_project\Server2\Server2\obj\Debug\Server2.pdb

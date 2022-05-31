@@ -1,0 +1,760 @@
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+-Cub 255 Add cub missing solved.
+
+-Cub 118 Change elements light mode white to gray
+-Cub 8 Dropdown color and working principle was problematic. We use griedview instead of dropdown 
+but it is not enough so later it changed.
+-Cub 176  Add note dont have done option. Cant get out keyboard. So instead of next line -> done option
+-Cub 137 duration based activities -> I started find problems then Barış will solve.
+-Cub 188 new page has color issue as white elements in charts. Solved.
+-Cub 21 selected and unselected used in title. Change blue and gray.
+
+-Cub 203 Dark mode log screen can not see easily. Color issue solved.
+-Cub 209 Change underline a bit lower. Problem take time because it is not easy.
+-Cub 211 -Same with 119 but there was new page so added new shortcuts.
+-Cub 221 After one page value entry it not seen in notifications. It show itself now.
+-Cub 215 only account holder delete profile . Solved. If they are not account holder can not see delete profile
+button.
+-Cub 226 Only Mom or Dad add co-host. Another relation can not see add cohost button.
+-Cub 235 Manuel entry has color problem in dark/light mode. Solved.
+-Cub 210 dark mode log screen
+-Cub 369 Weight increase 0.5 -> 0.1 / can not shown 2nd fraction
+-Cub 370 Chart Blocker values can not when double value inside. Backend solved problem.
+-Cub 371 Frequency and duration evolution charts fixed. Hours -> minute.
+
+
+
+--Find bugs in application. Write in googlesheet.
+-Cub 268 Diaper after save did not refresh
+-Cub 267 shortcut of diaper analysis not work.
+-Cub 119 Tracker analysis shortcut solved.
+-Cub 77 there is too much detail
+-Cub 244 edit photo ->Change photo
+-Cub 275 note keyboard ok collapse note. Works correctly and after save clear note and close /*
+note
+-Cub 114 Change buttons renames as Cubs./*
+-Cub 131 Add sign removed from note./*
+-Cub 142 when password or username wrong there was security issue. Now any information wrong//*
+says invalid credentials./*
+-Cub 164 Added two relations sister and brother.//*
+-Cub 214 when note fields open change its title as Hide Note./*
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllç
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+

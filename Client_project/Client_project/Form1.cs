@@ -416,6 +416,7 @@ namespace Client_project
                 int loopCount = (fileBytes.Length / mb) + 1;
                 long count = 0;
                 bool totalVerify = true;
+                bool decryptionerror = false;
                 for (int i = 0; i < loopCount; i++)
                 {
                     byte[] fileBytesSlice = parse_array(fileBytes, i * mb, mb);
@@ -435,6 +436,13 @@ namespace Client_project
                     byte[] fileSignedInputSizeEncrypted = new byte[16];
                     clientSocket.Receive(fileSignedInputSizeEncrypted);
 
+                    if (bytes_to_string(fileSignedInputSizeEncrypted) == "Decryption_Error") 
+                    {
+                        logs.AppendText("There is decryption error in server");
+                        decryptionerror = true;
+                        break;
+                    }
+
                     byte[] fileSignedInputSizeByte = decryptWithAES128(fileSignedInputSizeEncrypted, randomAES128Key, randomAES128IV);
                     string fileSignedInputSizeString = bytes_to_string(fileSignedInputSizeByte);
                     int fileSignedInputSizeInt = Int32.Parse(fileSignedInputSizeString);
@@ -442,6 +450,14 @@ namespace Client_project
                     byte[] fileSignedInput = new byte[fileSignedInputSizeInt];
                    
                     clientSocket.Receive(fileSignedInput);
+
+                    if (bytes_to_string(fileSignedInput) == "Decryption_Error")
+                    {
+                        logs.AppendText("There is decryption error in server");
+                        decryptionerror = true;
+                        break;
+                    }
+
                     bool verifyresult = verifyWithRSA(fileBytesSlice, 3072, connected_pub, fileSignedInput);
 
                     if (!verifyresult)
@@ -467,9 +483,11 @@ namespace Client_project
                     clientSocket.Send(errorTokenLengthEncrypted);
                     clientSocket.Send(errorTokenEncrypted);
                 }
-
-
-                else 
+                else if (decryptionerror == true)
+                {
+                    logs.AppendText("File could not sent succesfully:" + fileName + "\n");
+                }
+                else
                 {
                     byte[] endToken = string_to_bytes("*--END--*");
 
@@ -483,7 +501,7 @@ namespace Client_project
                     clientSocket.Send(endTokenEncrypted);
 
                     logs.AppendText(fileName + " was succesfully sent. \n");
-                  
+
                 }
                 
             }
