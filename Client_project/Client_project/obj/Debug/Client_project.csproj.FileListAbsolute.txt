@@ -103,3 +103,6 @@ C:\Users\emrek\Desktop\432_project_son\Client\Client_project\Client_project\obj\
 C:\Users\emrek\Desktop\432_project_son\Client\Client_project\Client_project\obj\Debug\Client_project.Form1.resources
 C:\Users\emrek\Desktop\432_project_son\Client\Client_project\Client_project\obj\Debug\Client_project.Properties.Resources.resources
 C:\Users\emrek\Desktop\432_project_son\Client\Client_project\Client_project\obj\Debug\Client_project.csproj.GenerateResource.Cache
+C:\Users\eyupb\Desktop\STEP2\432_project\Client_project\Client_project\bin\Debug\Client_project.exe.config
+C:\Users\eyupb\Desktop\STEP2\432_project\Client_project\Client_project\obj\Debug\Client_project.exe
+C:\Users\eyupb\Desktop\STEP2\432_project\Client_project\Client_project\obj\Debug\Client_project.pdb
