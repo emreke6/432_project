@@ -291,7 +291,14 @@ namespace RemoteServer_project
 
             return combinedEncryptedData;
         }
+        static byte[] applyHMACwithSHA256(byte[] byteInput, byte[] key)
+        {
+            HMACSHA256 hmacSHA256 = new HMACSHA256(key);
+            // get the result of HMAC operation
+            byte[] result = hmacSHA256.ComputeHash(byteInput);
 
+            return result;
+        }
         private byte[] parse_array(byte[] arr, int idx1, int len)
         {
             int lenMin = (arr.Length - idx1) < len ? (arr.Length - idx1) : len;
@@ -307,18 +314,23 @@ namespace RemoteServer_project
             //FOR PROJECT PART 2 //
             byte[] aes_key_buffer = new byte[16];
             byte[] aes_iv_buffer = new byte[16];
+            byte[] server_hmac = new byte[16];
 
             Socket whatSocket = inputSocket;
             if(connected_what == Server1_pub)
             {
                 Array.Copy(server1_key, 0, aes_key_buffer, 0, 16);
                 Array.Copy(server1_iv, 0, aes_iv_buffer, 0, 16);
+                Array.Copy(server1_hmac, 0, server_hmac, 0, 16);
+                logs.AppendText("MASTER Hmac of Server1:" + generateHexStringFromByteArray(server1_hmac) + "\n");
             }
 
             if (connected_what == Server2_pub)
             {
                 Array.Copy(server2_key, 0, aes_key_buffer, 0, 16);
                 Array.Copy(server2_iv, 0, aes_iv_buffer, 0, 16);
+                Array.Copy(server2_hmac, 0, server_hmac, 0, 16);
+                logs.AppendText("MASTER Hmac of Server2:" + generateHexStringFromByteArray(server2_hmac) + "\n");
             }
 
             string connected_pub = connected_what;
@@ -375,6 +387,12 @@ namespace RemoteServer_project
                 //remoteSocket.SendBufferSize = EncryptedData.Length;
 
                 whatSocket.Send(EncryptedData);
+
+                //HMAC PART
+
+                byte[] HmacValue = new byte[16];
+                HmacValue = applyHMACwithSHA256(fileBytesSlice, server_hmac);
+                whatSocket.Send(HmacValue);
             }
 
 
@@ -717,7 +735,7 @@ namespace RemoteServer_project
                         if (totalVerify == false)
                         {
                             logs.AppendText("There is an error in verification for the file:" + filename + "\n");
-                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                         }
 
                         else
@@ -858,7 +876,7 @@ namespace RemoteServer_project
                         if (totalVerify == false)
                         {
                             logs.AppendText("There is an error in verification for the file:" + filename + "\n");
-                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                         }
 
                         else
@@ -1013,7 +1031,7 @@ namespace RemoteServer_project
                             if (totalVerify == false)
                             {
                                 logs.AppendText("There is an error in verification for the file:" + filename + "\n");
-                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                             }
 
                             else
@@ -1035,9 +1053,9 @@ namespace RemoteServer_project
                         catch 
                         {
                             logs.AppendText("There is an error in decryption process for the file \n");
-                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename))
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
                             {
-                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                             }
                             string messageError = "Decryption_Error";
                             byte[] messageByte = new byte[16];
