@@ -22,6 +22,8 @@ namespace RemoteServer_project
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<string> Users = new List<String>();
         List<string> server_replicates = new List<string>();
+        List<string> server1_replicates = new List<string>();
+        List<string> server2_replicates = new List<string>();
         List<string> connected_servers = new List<string>();
         List<Socket> UserSocketList = new List<Socket>(); // list of client socket connected to server
         List<Socket> ServerSocketList = new List<Socket>(); // list of client socket connected to server
@@ -489,6 +491,7 @@ namespace RemoteServer_project
                         connected_servers.Add("Server1");
 
                         List<string> sent_files = new List<string>();
+                        List<string> sent_files_1 = new List<string>();
                         try
                         {
                             if(connected_servers.Count == 2)
@@ -501,8 +504,12 @@ namespace RemoteServer_project
                                 }
                             }
 
-                            Thread ServerReceiveThread = new Thread(new ThreadStart(serverReceive));
-                            ServerReceiveThread.Start();
+                            
+                            for (int i = 0; i < server1_replicates.Count; i++)
+                            {                                    
+                                send_replicate(server1Socket, server1_replicates[i], Server1_pub);
+                                sent_files_1.Add(server_replicates[i]);                                
+                            } 
                         }
                         finally
                         {
@@ -510,7 +517,13 @@ namespace RemoteServer_project
                             {
                                 server_replicates.Remove(sent_files[i]);
                             }
+                            for (int i = 0; i < sent_files_1.Count; i++)
+                            {
+                                server1_replicates.Remove(sent_files_1[i]);
+                            }
                         }
+                        Thread ServerReceiveThread = new Thread(new ThreadStart(serverReceive));
+                        ServerReceiveThread.Start();
                     }
 
                     else if (which_incomer == "server2")
@@ -554,6 +567,7 @@ namespace RemoteServer_project
                         connected_servers.Add("Server2");
 
                         List<string> sent_files = new List<string>();
+                        List<string> sent_files_2 = new List<string>();
                         try
                         {
                             if (connected_servers.Count == 2)
@@ -565,15 +579,22 @@ namespace RemoteServer_project
                                     sent_files.Add(server_replicates[i]);
                                 }
                             }
-
-                            Thread ServerReceiveThread = new Thread(new ThreadStart(serverReceive));
-                            ServerReceiveThread.Start();
+                           
+                            for (int i = 0; i < server2_replicates.Count; i++)
+                            {
+                                send_replicate(server2Socket, server2_replicates[i], Server2_pub);
+                                sent_files_2.Add(server2_replicates[i]);
+                            }
                         }
                         finally
                         {
                             for (int i = 0; i < sent_files.Count; i++)
                             {
                                 server_replicates.Remove(sent_files[i]);
+                            }
+                            for (int i = 0; i < sent_files_2.Count; i++)
+                            {
+                                server2_replicates.Remove(sent_files_2[i]);
                             }
                         }
 
@@ -703,6 +724,13 @@ namespace RemoteServer_project
                         {
                             logs.AppendText("All file packets for the " + filename + " file was succesfully verified. \n");
                             logs.AppendText(filename + " was succesfully received and stored in the File Sytem. \n");
+
+                            server2_replicates.Add(filename);
+                            if (connected_servers.Contains("Server2"))
+                            {
+                                send_replicate(server2Socket, filename, Server2_pub);
+                                server2_replicates.Remove(filename);
+                            }
                         }
 
                     }
@@ -837,6 +865,13 @@ namespace RemoteServer_project
                         {
                             logs.AppendText("All file packets for the " + filename + " file was succesfully verified. \n");
                             logs.AppendText(filename + " was succesfully received and stored in the File Sytem. \n");
+
+                            server1_replicates.Add(filename);
+                            if (connected_servers.Contains("Server1"))
+                            {
+                                send_replicate(server1Socket, filename, Server1_pub);
+                                server1_replicates.Remove(filename);
+                            }
                         }
 
                     }

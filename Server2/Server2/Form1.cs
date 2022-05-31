@@ -31,6 +31,7 @@ namespace Server2
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         Socket remoteSocket, server1Socket;
         List<Socket> socketList = new List<Socket>();
+        List<string> server_replicates = new List<string>();
 
         string Server1_pub;
         string Server2_pub_priv;
@@ -165,6 +166,11 @@ namespace Server2
                         newClient.Send(whoamiByte);
 
                         remoteSocket = newClient;
+
+                        for (int i = 0; i < server_replicates.Count; i++)
+                        {
+                            send_replicate(remoteSocket, server_replicates[i], Master_pub);
+                        }                        
 
 
                         Thread masterReceiveThread = new Thread(new ThreadStart(MasterReceive));
@@ -618,8 +624,14 @@ namespace Server2
                                 logs.AppendText(filename + " was succesfully received and stored in the File Sytem. \n");
 
                                 //FOR PROJECT PART 2 //
-                                //send_replicate(remoteSocket, filename, Master_pub);
-                                //send_replicate(server1Socket, filename, Server1_pub);
+
+                                server_replicates.Add(filename);
+                                if(remoteConnected)
+                                {
+                                    send_replicate(remoteSocket, filename, Master_pub);
+                                    server_replicates.Remove(filename);
+                                }
+                                
                             }
                         }
                         catch 
@@ -1096,6 +1108,11 @@ namespace Server2
                             logs.AppendText("Sign: " + generateHexStringFromByteArray(bytes_to_string(enryptedSessionKeySigned)) + "\n\n\n");
 
                             logs.AppendText("Connected to Master \n");
+
+                            for (int i = 0; i < server_replicates.Count; i++)
+                            {
+                                send_replicate(remoteSocket, server_replicates[i], Master_pub);
+                            }
 
                             Thread masterThread;
                             masterThread = new Thread(new ThreadStart(MasterReceive));

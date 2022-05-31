@@ -24,6 +24,7 @@ namespace Server
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         Socket remoteSocket, server2Socket;
         List<Socket> socketList = new List<Socket>();
+        List<string> server_replicates = new List<string>();
 
         string Server1_pub_priv;
         string Server2_pub;
@@ -158,10 +159,14 @@ namespace Server
 
                         remoteSocket = newClient;
 
+                        for (int i  = 0; i < server_replicates.Count; i++)
+                        {
+                            send_replicate(remoteSocket, server_replicates[i], Master_pub);
+                        }
+
 
                         Thread masterReceiveThread = new Thread(new ThreadStart(MasterReceive));
                         masterReceiveThread.Start();
-
                     }
 
 
@@ -613,9 +618,15 @@ namespace Server
 
                                 //FOR PROJECT PART 2 //
 
-                               // send_replicate(remoteSocket, filename, Master_pub);
-                               // send_replicate(server2Socket, filename, Server2_pub);
+                                server_replicates.Add(filename);
 
+                                if (remoteConnected)
+                                {
+                                    send_replicate(remoteSocket, filename, Master_pub);
+                                    server_replicates.Remove(filename);
+                                }
+                                
+                              
                                 //FOR PROJECT PART 2 //
                             }
                         }
@@ -636,7 +647,6 @@ namespace Server
 
 
                     }
-
                     else if (message == "file_downlo")
                     {
                         byte[] size_byteEncrypted = new byte[384];
@@ -755,7 +765,7 @@ namespace Server
 
 
                     }
-
+                    
 
 
                 }
@@ -880,8 +890,7 @@ namespace Server
                             logs.AppendText(filename + " was succesfully received and stored in the File Sytem. \n");
                         }
 
-                    }
-
+                    }                  
                 }
                 catch
                 {
@@ -1108,6 +1117,11 @@ namespace Server
                             logs.AppendText("Sign: " + generateHexStringFromByteArray(bytes_to_string(enryptedSessionKeySigned)) + "\n\n\n");
 
                             logs.AppendText("Connected to Master \n");
+
+                            for (int i = 0; i < server_replicates.Count; i++)
+                            {
+                                send_replicate(remoteSocket, server_replicates[i], Master_pub);
+                            }
 
                             Thread masterThread;
                             masterThread = new Thread(new ThreadStart(MasterReceive));
