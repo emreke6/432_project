@@ -1,0 +1,40 @@
+20289 - CS 432 - 0
+Lab - 20290 - CS 432L - A1
+Lab - 20291 - CS 432L - A2
+
+20298 - CS 48001 - 0  Course Web
+20297 - CS 48000 - 0  Course Web
+
+
+20287 - CS 412 - 0
+20288 - CS 412R - 0
+
+20280 - CS 407 - 0
+20281 - CS 407R - 0
+
+
+20289 20290  20280 20281 20287 20288       20298 20297   
+
+
+SQL:
+
+Languages:
+
+INSERT INTO "Languages" (language_plain) VALUES ('English'), ('French'), ('Turkish'), ('Italian'), ('Arabic'), ('German');
+
+Religions:
+
+INSERT INTO "Religions" (religion_plain) VALUES ('Muslim'), ('Orthodox'), ('Catholic'), ('Armenian'), ('Protestant'), ('Israelite'), ('Christian'), ('Gregoiran'), ('Jewish');
+
+Nationalities:
+
+INSERT INTO "Nationalities" (nationality_plain) VALUES ('Ottoman'), ('Turkish'), ('French'), ('English'), ('Italian'), ('Swiss'), ('Palestinian'), ('German'), ('Hellenic'), ('Austrian'), ('Dutch'), ('Belgian'), ('Spanish'), ('Arabic'), ('Bulgar'), ('Lebanese'), ('Armenian'), ('Persian'), ('Hungarian'), ('Syrian'), ('Baghdadian'),('Egyptian');
+
+Agencies:
+
+INSERT INTO "Agencies" (agency_id, agency_name) VALUES ('1','Central'), ('2', 'Smyrna'), ('3', 'Yeni Cami'), ('4', 'Limassol'), ('5', 'Eskişehir'), ('6', 'Afyon-Karahisar'), ('7', 'Manisa'), ('8', 'Jerusalem'), ('9', 'Baghdad'), ('10', 'Salonika'), ('11', 'London'), ('12', 'Paris'), ('13', 'Konya'), ('14', 'Aydın'), ('15', 'Isparta'), ('16', 'Ankara'), ('17', 'Malatya'), ('18', 'Lefka'), ('19', 'Bolu'), ('20', 'Urfa');
+
+
+INSERT INTO "Agencies" (agency_id, agency_name) VALUES ('21', 'Samsun') , ('22' , 'Sivas'), ('23', 'Zonguldak'), ('24', 'Mamuret-ul Aziz'), ('25', 'Adana'), ('26', 'Brousse'), ('27', 'Le Caire'), ('28', 'Alexandrie'), ('29', 'Elazığ') , ('30', 'Gazi-Antep') , ('31', 'İstanbul'), ('32', 'Marseille'), ('33', 'Bursa'), ('34', 'Bandırma'), ('35', 'Adapazarı'), ('36', 'Sofia'), ('37', 'Monastir'), ('38', 'Diyarbakır'), ('39', 'Mersin');
+
+INSERT INTO "Agencies" (agency_id, agency_name) VALUES ('40', 'Tarsus'), ('41', 'Damascus'), ('42', 'Edirne'), ('43', 'Tehran'), ('44', 'Kütahya'), ('45', 'Kırklareli'), ('46', 'Bilecik'), ('47', 'Famagusta') , ('48', 'Nicosia'), ('49', 'Mansoura'), ('50', 'Larnaca'), ('51','Beirut'), ('52', 'Denizli'), ('53', 'Ceyhan');
