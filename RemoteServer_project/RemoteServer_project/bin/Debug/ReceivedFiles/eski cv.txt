@@ -1,0 +1,26 @@
+-	Higher-level cognitive flexibility,
+-	Higher-level emotional intelligent,
+-	People management skills, coordination with other and high negotiation skills,
+-	Critical thinking ability,
+-	Creativity,
+-	Curious,
+
+
+CREATE TABLE documents 
+(
+	user_id serial PRIMARY KEY,
+	username VARCHAR ( 50 ) UNIQUE NOT NULL,
+	password VARCHAR ( 50 ) NOT NULL,
+	email VARCHAR ( 255 ) UNIQUE NOT NULL,
+	created_on TIMESTAMP NOT NULL,
+    last_login TIMESTAMP,
+	img bytea
+);
+
+INSERT INTO documents (username, password,email,created_on,img)
+VALUES ('burak','bubenimsifrem', 'bubenimsifrem@gmail.com', cast('30/01/2022' as date), pg_read_binary_file('C:\Users\eyupb\Desktop\indir.jpg'));
+
+
+-get document folder number
+-get document by document id 
+-get document by user id 

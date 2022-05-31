@@ -361,7 +361,14 @@ namespace Server
             return result;
         }
 
+        static byte[] applyHMACwithSHA256(byte[] byteInput, byte[] key)
+        {
+            HMACSHA256 hmacSHA256 = new HMACSHA256(key);
+            // get the result of HMAC operation
+            byte[] result = hmacSHA256.ComputeHash(byteInput);
 
+            return result;
+        }
         private byte[] combine_byte_arrays(byte[] arr1, byte[] arr2)
         {
             byte[] combinedEncryptedData = new byte[arr1.Length + arr2.Length];
@@ -593,6 +600,7 @@ namespace Server
 
                                 s.Send(fileSigned);
 
+
                                 Console.WriteLine(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                                 stream.Write(fileContentByte, 0, fileContentByte.Length);
                             }
@@ -622,9 +630,9 @@ namespace Server
                         catch 
                         {
                             logs.AppendText("There is an error in decryption process for the file \n");
-                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename))
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
                             {
-                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                             }
                             string messageError = "Decryption_Error";
                             byte[] messageByte = new byte[16];
@@ -835,6 +843,7 @@ namespace Server
                         var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
 
                         bool totalVerify = true;
+                        bool hmacValue = true;
                         while (true)
                         {
                             byte[] combinedDataInputHeaderEncrypted = new byte[16];
@@ -862,6 +871,20 @@ namespace Server
                             if (bytes_to_string(fileContentByte) == "*--END--*") break;
 
 
+                            //byte[] Hmackey = new byte[16];
+                            //remoteSocket.Receive(Hmackey);
+                            logs.AppendText("Server2 Hmackey from master: " + generateHexStringFromByteArray(HMAC_buffer) + "\n");
+                            byte[] HmacValue = new byte[32];
+                            remoteSocket.Receive(HmacValue);
+
+                            byte[] HmacServer1 = new byte[16];
+                            HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+
+                            if (generateHexStringFromByteArray(HmacServer1) != generateHexStringFromByteArray(HmacValue)) 
+                            {
+                                hmacValue = false;
+                            }
+
                             
                             stream.Write(fileContentByte, 0, fileContentByte.Length);
                         }
@@ -871,9 +894,19 @@ namespace Server
                         if (totalVerify == false)
                         {
                             logs.AppendText("There is an error in verification for the file:" + filename + "\n");
-                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                         }
+                        else if (hmacValue == false) 
+                        {
+                            logs.AppendText("There is an ERROR IN HMAC: \n");
 
+                            string path = Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename;
+                            logs.AppendText("Path: " + path + "\n");
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                            {
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                            }
+                        }
                         else
                         {
                             logs.AppendText("All file packets for the " + filename + " file was succesfully verified. \n");
@@ -994,7 +1027,7 @@ namespace Server
                         if (totalVerify == false)
                         {
                             logs.AppendText("There is an error in verification for the file:" + filename + "\n");
-                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                         }
 
                         else
