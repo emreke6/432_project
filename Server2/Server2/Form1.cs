@@ -1210,9 +1210,115 @@ namespace Server2
             Environment.Exit(0);
         }
 
-        private void ipAdress_TextChanged(object sender, System.EventArgs e)
+        private void connectButton2_Click(object sender, System.EventArgs e)
         {
+            Socket socket2 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            string IP = ipAdress2.Text;
+            int port;
+            if (Int32.TryParse(portNum2.Text, out port))
+            {
+                try
+                {
+                    socket2.Connect(IP, port);
+                    connectButton2.Enabled = false;
 
+                    logs.AppendText("Connection is pending...\n");
+
+
+                    using (System.IO.StreamReader fileReader =
+                    new System.IO.StreamReader("Server2_pub_prv.txt"))
+                    {
+                        Server2_pub_priv = fileReader.ReadLine();
+                    }
+
+                    using (System.IO.StreamReader fileReader =
+                    new System.IO.StreamReader("Server1_pub.txt"))
+                    {
+                        Server1_pub = fileReader.ReadLine();
+                    }
+
+                    using (System.IO.StreamReader fileReader =
+                    new System.IO.StreamReader("MasterServer_pub.txt"))
+                    {
+                        Master_pub = fileReader.ReadLine();
+                    }
+
+
+                    Byte[] buffer = new Byte[64];
+                    buffer = string_to_bytes("server2");
+                    socket2.Send(buffer);
+
+                    Byte[] who = new Byte[64];
+                    socket2.Receive(who);
+                    string whoString = bytes_to_string(who);
+
+                    if (whoString == "server1")
+                    {
+                        server1Socket = socket2;
+                        logs.AppendText("Connected to Server1 \n");
+
+                        Thread serverThread;
+                        serverThread = new Thread(new ThreadStart(server1Receive));
+                        serverThread.Start();
+                    }
+
+                    else
+                    {
+                        remoteSocket = socket2;
+                        Byte[] enryptedSessionKey = new byte[384];
+                        remoteSocket.Receive(enryptedSessionKey);
+
+                        Byte[] enryptedSessionKeySigned = new byte[384];
+                        remoteSocket.Receive(enryptedSessionKeySigned);
+
+                        // verifying with RSA 3072
+                        bool verificationResult = verifyWithRSA(enryptedSessionKey, 3072, Master_pub, enryptedSessionKeySigned);
+
+                        if (!verificationResult)
+                        {
+                            logs.AppendText("Invalid signature \n");
+                        }
+                        else
+                        {
+                            logs.AppendText("Valid signature \n");
+
+                            byte[] decryptedKey = decryptWithRSA(enryptedSessionKey, 3072, Server2_pub_priv);
+
+
+
+                            Array.Copy(decryptedKey, 0, aes_key_buffer, 0, 16);
+                            Array.Copy(decryptedKey, 16, aes_iv_buffer, 0, 16);
+                            Array.Copy(decryptedKey, 32, HMAC_buffer, 0, 16);
+                            //Receive server key objects from master server
+
+                            logs.AppendText("\n\nKeys for connection with server2: ");
+                            logs.AppendText("Key: " + generateHexStringFromByteArray(aes_key_buffer) + "\n");
+                            logs.AppendText("IV: " + generateHexStringFromByteArray(aes_iv_buffer) + "\n");
+                            logs.AppendText("HMAC: " + generateHexStringFromByteArray(HMAC_buffer) + "\n\n\n");
+                            logs.AppendText("Sign: " + generateHexStringFromByteArray(bytes_to_string(enryptedSessionKeySigned)) + "\n\n\n");
+
+                            logs.AppendText("Connected to Master \n");
+
+                            for (int i = 0; i < server_replicates.Count; i++)
+                            {
+                                send_replicate(remoteSocket, server_replicates[i], Master_pub);
+                            }
+
+                            Thread masterThread;
+                            masterThread = new Thread(new ThreadStart(MasterReceive));
+                            masterThread.Start();
+                        }
+                    }
+                }
+                catch
+                {
+                    logs.AppendText("Could not connect to remote server\n");
+                }
+            }
+            else
+            {
+                logs.AppendText("Check the port\n");
+            }
         }
     }
 }
