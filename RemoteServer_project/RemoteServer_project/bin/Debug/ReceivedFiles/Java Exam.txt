@@ -1,0 +1,20 @@
+1. İstek tekrar eden karakterleri silen bir java programı
+ve sildiği kadar karakteri yazdırıyor. 
+2. Write abstract class food with double and void function abstract
+   a. proteins,fats,carbs,tasty,
+   b. void getMactoNutrients Abstract method
+2b. class egg with extend food and 
+   a. constructor to initalize pro,fats,carbs
+   b. int tastyScore = 7
+   c. string type ? non vegetarian
+   d. void get MacroNutrients = prints an agg has this.proteins 
+  gms of protein, this.fats ..  gms of fats and this.carbs gms of carbohydted
+2c. class Bread extends Food
+Similar thinks
+a. constructor same variables
+tast scode 8
+string type vegerriatn,
+prints  a sice of bread and same otherwith 2.d
+
+3.Proper Preparation 
+verilen n sizeda 
