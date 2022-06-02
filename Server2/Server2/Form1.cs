@@ -728,6 +728,9 @@ namespace Server2
                             byte[] messageByte = new byte[16];
                             messageByte = string_to_bytes(messageError);
                             s.Send(messageByte);
+
+                            byte[] signMessageError = signWithRSA(messageByte, 3072, Server2_pub_priv);
+                            s.Send(signMessageError);
                         }
                     }
 
