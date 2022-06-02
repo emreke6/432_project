@@ -1,0 +1,68 @@
+from xml.dom.minidom import Document
+from app import app
+
+"""Ahmed imports"""
+from auth.views import auth_blueprint
+from cruds.loginDetails import ld_blueprint
+from cruds.scannedDocs import scannedDocs_blueprint
+from cruds.dataAssests import dataAssets_blueprint
+from cruds.docsOcr import docsOCR_blueprint
+from cruds.tasks import tasks_blueprint
+from cruds.agencies import agencies_blueprint
+from cruds.tasksFlags import tasksFlags_blueprint
+from cruds.documentTypes import docTypes_blueprint
+from cruds.religions import religions_blueprint
+from cruds.maritalStatus import maritialStatus_blueprint
+from cruds.users import users_blueprint
+from cruds.usersLanguages import userLanguages_blueprint
+from cruds.languages import languages_blueprint
+from cruds.dataRead_personal_basics import dataRead_personal_basics_blueprint
+from cruds.dataRead_Personal_children import Dataread_Personal_Children_blueprint
+from cruds.dataRead_Spouse import Dataread_Personal_Spouse_blueprint
+from cruds.dataRead_personal_education import Dataread_Personal_Education_blueprint
+from cruds.dataReadPersonalLanguage import Dataread_Personal_Language_blueprint
+from cruds.dataReadPriorWork import Dataread_Prior_Work_blueprint
+from cruds.nationalities import nationalities_blueprint
+from home import home
+from cruds.dataRead_relatives import relatives_blueprint
+from cruds.dataRead_photo import Dataread_Photo_blueprint
+from cruds.dataRead_coverage import Dataread_Coverage_blueprint
+from APIs.healthCheck import healthCheck_blueprint
+from APIs.waitingTasks import Waitingtasks_blueprint
+from APIs.adminPanel import adminPanel_blueprint
+
+
+"""Ahmed code"""
+app.register_blueprint(auth_blueprint)
+app.register_blueprint(ld_blueprint)
+app.register_blueprint(scannedDocs_blueprint)
+app.register_blueprint(dataAssets_blueprint)
+app.register_blueprint(docsOCR_blueprint)
+app.register_blueprint(tasks_blueprint)
+app.register_blueprint(tasksFlags_blueprint)
+app.register_blueprint(agencies_blueprint)
+app.register_blueprint(docTypes_blueprint)
+app.register_blueprint(religions_blueprint)
+app.register_blueprint(maritialStatus_blueprint)
+app.register_blueprint(users_blueprint)
+app.register_blueprint(userLanguages_blueprint)
+app.register_blueprint(languages_blueprint)
+app.register_blueprint(dataRead_personal_basics_blueprint)
+app.register_blueprint(Dataread_Personal_Children_blueprint)
+app.register_blueprint(Dataread_Personal_Spouse_blueprint)
+app.register_blueprint(adminPanel_blueprint)
+app.register_blueprint(Dataread_Personal_Education_blueprint)
+app.register_blueprint(Dataread_Personal_Language_blueprint)
+app.register_blueprint(Dataread_Prior_Work_blueprint)
+app.register_blueprint(nationalities_blueprint)
+app.register_blueprint(home)
+app.register_blueprint(Waitingtasks_blueprint)
+app.register_blueprint(relatives_blueprint)
+app.register_blueprint(Dataread_Photo_blueprint)
+app.register_blueprint(Dataread_Coverage_blueprint)
+app.register_blueprint(healthCheck_blueprint)
+
+
+
+if __name__ == "__main__":
+   app.run(host='0.0.0.0',  port = 80,  debug=True)

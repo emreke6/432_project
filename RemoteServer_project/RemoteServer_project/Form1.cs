@@ -324,6 +324,18 @@ namespace RemoteServer_project
         //FUNCTIONS PART END
 
         //NICE FUNCTIONS START
+        void save_Queue()
+        {
+            using (StreamWriter writer = new StreamWriter("Queue.txt"))
+            {
+                logs.AppendText("BURDA. \n");
+                for (int i = 0; i < server_replicates.Count; i++)
+                {
+                    writer.WriteLine(server_replicates[i]);
+                }
+            }
+        }
+
         void send_replicate(Socket inputSocket, string filename, string connected_what)
         {
             //FOR PROJECT PART 2 //
@@ -390,9 +402,21 @@ namespace RemoteServer_project
 
                 //HMAC PART
 
-                byte[] HmacValue = new byte[16];
-                HmacValue = applyHMACwithSHA256(fileBytesSlice, HMAC_buffer);
-                whatSocket.Send(HmacValue);
+                //byte[] HMAC_buffer2 = null;
+                try
+                {
+                    byte[] HmacValue = new byte[32];
+                    HmacValue = applyHMACwithSHA256(fileBytesSlice, HMAC_buffer);
+                    whatSocket.Send(HmacValue);
+                }
+                catch
+                {
+                    byte[] HmacValue = new byte[32];
+                    HmacValue = string_to_bytes("HMAC_CATCH_ERRORHMAC_CATCH_ERROR");
+                    whatSocket.Send(HmacValue);
+                    break;
+                }
+
             }
 
 
@@ -521,12 +545,12 @@ namespace RemoteServer_project
                                 }
                             }
 
-                            
+                            /*
                             for (int i = 0; i < server1_replicates.Count; i++)
                             {                                    
                                 send_replicate(server1Socket, server1_replicates[i], Server1_pub);
                                 sent_files_1.Add(server_replicates[i]);                                
-                            } 
+                            } */
                         }
                         finally
                         {
@@ -534,10 +558,12 @@ namespace RemoteServer_project
                             {
                                 server_replicates.Remove(sent_files[i]);
                             }
+
+                            /*
                             for (int i = 0; i < sent_files_1.Count; i++)
                             {
                                 server1_replicates.Remove(sent_files_1[i]);
-                            }
+                            }*/
                         }
                         Thread ServerReceiveThread = new Thread(new ThreadStart(serverReceive));
                         ServerReceiveThread.Start();
@@ -595,11 +621,12 @@ namespace RemoteServer_project
                                 }
                             }
                            
+                            /*
                             for (int i = 0; i < server2_replicates.Count; i++)
                             {
                                 send_replicate(server2Socket, server2_replicates[i], Server2_pub);
                                 sent_files_2.Add(server2_replicates[i]);
-                            }
+                            }*/
                         }
                         finally
                         {
@@ -607,10 +634,11 @@ namespace RemoteServer_project
                             {
                                 server_replicates.Remove(sent_files[i]);
                             }
+                            /*
                             for (int i = 0; i < sent_files_2.Count; i++)
                             {
                                 server2_replicates.Remove(sent_files_2[i]);
-                            }
+                            }*/
                         }
 
                         Thread Server2ReceiveThread = new Thread(new ThreadStart(server2Receive));
@@ -726,6 +754,11 @@ namespace RemoteServer_project
 
                         logs.AppendText("Started receiving " + filename + " from " + user + " with size of " + inputFileSizeString + ".\n");
 
+                        if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                        {
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                        }
+
                         var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
 
                         bool totalVerify = true;
@@ -761,11 +794,24 @@ namespace RemoteServer_project
                             byte[] HmacValue = new byte[32];
                             server1Socket.Receive(HmacValue);
 
-                            byte[] HmacServer1 = new byte[16];
+                            byte[] HmacServer1 = new byte[32];
 
+                            if (bytes_to_string(HmacValue) == "HMAC_CATCH_ERRORHMAC_CATCH_ERROR")
+                            {
+                                hmacValue = false;
+                                break;
+                            }
                             //Byte[] HMAC_buffer2 = string_to_bytes("eeee");
 
-                            HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+                            try
+                            {
+                                HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+                            }
+                            catch
+                            {
+                                hmacValue = false;
+                                break;
+                            }
 
                             if (generateHexStringFromByteArray(HmacServer1) != generateHexStringFromByteArray(HmacValue))
                             {
@@ -819,12 +865,13 @@ namespace RemoteServer_project
                             server1Socket.Send(signMessageError);
                             //FOR HMAC END
 
+                            /*
                             server2_replicates.Add(filename);
                             if (connected_servers.Contains("Server2"))
                             {
                                 send_replicate(server2Socket, filename, Server2_pub);
                                 server2_replicates.Remove(filename);
-                            }
+                            }*/
                         }
 
                     }
@@ -869,7 +916,7 @@ namespace RemoteServer_project
                     {
 
                         Byte[] buffer2 = new Byte[384];
-                        server1Socket.Receive(buffer2);
+                        server2Socket.Receive(buffer2);
 
                         bool value = verifyWithRSA(buffer, 3072, Server2_pub, buffer2);
 
@@ -886,7 +933,7 @@ namespace RemoteServer_project
                     if (message == "HmacVerMast")
                     {
                         Byte[] buffer2 = new Byte[384];
-                        server1Socket.Receive(buffer2);
+                        server2Socket.Receive(buffer2);
 
                         bool value = verifyWithRSA(buffer, 3072, Server2_pub, buffer2);
 
@@ -944,6 +991,11 @@ namespace RemoteServer_project
 
                         logs.AppendText("Started receiving " + filename + " from " + user + " with size of " + inputFileSizeString + ".\n");
 
+                        if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                        {
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                        }
+
                         var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
 
                         bool totalVerify = true;
@@ -981,11 +1033,26 @@ namespace RemoteServer_project
                             byte[] HmacValue = new byte[32];
                             server2Socket.Receive(HmacValue);
 
-                            byte[] HmacServer1 = new byte[16];
+                            byte[] HmacServer1 = new byte[32];
 
-                            //Byte[] HMAC_buffer2 = string_to_bytes("eeee");
+                            //Byte[] HMAC_buffer2 = null;
 
-                            HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+                            if (bytes_to_string(HmacValue) == "HMAC_CATCH_ERRORHMAC_CATCH_ERROR")
+                            {
+                                hmacValue = false;
+                                break;
+                            }
+
+
+                            try
+                            {
+                                HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+                            }
+                            catch 
+                            {
+                                hmacValue = false;
+                                break;
+                            }
 
                             if (generateHexStringFromByteArray(HmacServer1) != generateHexStringFromByteArray(HmacValue))
                             {
@@ -1036,12 +1103,13 @@ namespace RemoteServer_project
                             byte[] signMessageError = signWithRSA(messageByte, 3072, Master_pub_priv);
                             server2Socket.Send(signMessageError);
 
+                            /*
                             server1_replicates.Add(filename);
                             if (connected_servers.Contains("Server1"))
                             {
                                 send_replicate(server1Socket, filename, Server1_pub);
                                 server1_replicates.Remove(filename);
-                            }
+                            }*/
                         }
 
                     }
@@ -1131,6 +1199,11 @@ namespace RemoteServer_project
                             filename = bytes_to_string(filenameByte);
 
                             logs.AppendText("Started receiving " + filename + " from " + user + " with size of " + inputFileSizeString + ".\n");
+
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                            {
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                            }
 
                             var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
 
@@ -1370,6 +1443,7 @@ namespace RemoteServer_project
             listening = false;
             terminating = true;
 
+            save_Queue();
             for (int i = 0; i < AllSocketList.Count; i++)
             {
                 AllSocketList[i].Close();

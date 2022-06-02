@@ -26,6 +26,7 @@ namespace Client_project
         string Server2_pub;
         string connected_pub;
         string connected_server;
+        string username;
 
 
         public class Document
@@ -60,6 +61,9 @@ namespace Client_project
                     IP.Enabled = false;
                     port.Enabled = false;
                     button_disconnect.Enabled = true;
+                    textBox_username.Enabled = false;
+
+                    username = textBox_username.Text;
 
                     //Read from MasterServer_pub_prv.txt
 
@@ -111,6 +115,12 @@ namespace Client_project
                     if (!Directory.Exists(directory1))
                     {
                         Directory.CreateDirectory(directory1);
+                    }
+
+                    string directory2 = Directory.GetCurrentDirectory() + "\\DownloadFiles\\" + username;
+                    if (!Directory.Exists(directory2))
+                    {
+                        Directory.CreateDirectory(directory2);
                     }
 
                     if (incomingWhoString == "master"){
@@ -517,6 +527,7 @@ namespace Client_project
             connect_button.Enabled = true;
             upload_button.Enabled = false;
             button_disconnect.Enabled = false;
+            textBox_username.Enabled = true;
 
             terminating = true;
 
@@ -572,7 +583,11 @@ namespace Client_project
             {
                 logs.AppendText("Positive acknowlegement received and it is verified \n");
 
-                var stream = new FileStream(Directory.GetCurrentDirectory() + "\\DownloadFiles\\" + downloadFilename, FileMode.Append);
+                if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + downloadFilename))
+                {
+                    File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + downloadFilename);
+                }
+                var stream = new FileStream(Directory.GetCurrentDirectory() + "\\DownloadFiles\\" + username + "\\" + downloadFilename, FileMode.Append);
 
                 bool totalVerify = true;
                 while (true)
@@ -652,7 +667,7 @@ namespace Client_project
                 if (totalVerify == false)
                 {
                     logs.AppendText("There is an error in verification for the file:" + downloadFilename + "\n");
-                    File.Delete(Directory.GetCurrentDirectory() + "\\DownloadFiles\\" + downloadFilename);
+                    File.Delete(Directory.GetCurrentDirectory() + "\\DownloadFiles\\" + username + "\\" + downloadFilename);
                 }
 
                 else
@@ -682,5 +697,7 @@ namespace Client_project
 
             
         }
+
+        
     }
 }

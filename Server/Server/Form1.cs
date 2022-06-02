@@ -24,7 +24,11 @@ namespace Server
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         Socket remoteSocket, server2Socket;
         List<Socket> socketList = new List<Socket>();
+
         List<string> server_replicates = new List<string>();
+        List<string> server1_replicates = new List<string>();
+        List<string> server2_replicates = new List<string>();
+        List<string> connected_servers = new List<string>();
 
         string Server1_pub_priv;
         string Server2_pub;
@@ -145,25 +149,50 @@ namespace Server
 
                         newClient.Send(whoamiByte);
 
+                        connected_servers.Add("Server2");
+
+                        List<string> sent_files = new List<string>();
+                        List<string> sent_files_1 = new List<string>();
+                        try
+                        {
+                            if (connected_servers.Count == 2)
+                            {
+                                for (int i = 0; i < server_replicates.Count; i++)
+                                {
+                                    send_replicate(remoteSocket, server_replicates[i], Master_pub);
+                                    send_replicate(server2Socket, server_replicates[i], Server2_pub);
+                                    sent_files.Add(server_replicates[i]);
+                                }
+                            }
+
+                            /*
+                            for (int i = 0; i < server1_replicates.Count; i++)
+                            {                                    
+                                send_replicate(server1Socket, server1_replicates[i], Server1_pub);
+                                sent_files_1.Add(server_replicates[i]);                                
+                            } */
+                        }
+                        finally
+                        {
+                            for (int i = 0; i < sent_files.Count; i++)
+                            {
+                                server_replicates.Remove(sent_files[i]);
+                            }
+
+                            /*
+                            for (int i = 0; i < sent_files_1.Count; i++)
+                            {
+                                server1_replicates.Remove(sent_files_1[i]);
+                            }*/
+                        }
+
                         Thread Server2ReceiveThread = new Thread(new ThreadStart(server2Receive));
                         Server2ReceiveThread.Start();
                     }
 
                     else if (which_incomer == "master")
                     {
-                        ServerSocketList.Add(newClient);
-                        AllSocketList.Add(newClient);
-                        Users.Add("Master");
-                        logs.AppendText("Master Server is connected. \n");
-                        newClient.Send(whoamiByte);
-
-                        remoteSocket = newClient;
-
-                        for (int i  = 0; i < server_replicates.Count; i++)
-                        {
-                            send_replicate(remoteSocket, server_replicates[i], Master_pub);
-                        }
-
+                        
 
                         Thread masterReceiveThread = new Thread(new ThreadStart(MasterReceive));
                         masterReceiveThread.Start();
@@ -395,6 +424,19 @@ namespace Server
         //FUNCTIONS PART END
 
         //NICE FUNCTIONS START
+
+        void save_Queue()
+        {
+            using (StreamWriter writer = new StreamWriter("Queue.txt"))
+            {
+                logs.AppendText("BURDA. \n");
+                for (int i = 0; i < server_replicates.Count; i++)
+                {
+                    writer.WriteLine(server_replicates[i]);
+                }
+            }
+        }
+
         void send_replicate(Socket inputSocket, string filename, string connected_what)
         {
             //FOR PROJECT PART 2 //
@@ -453,9 +495,19 @@ namespace Server
                 whatSocket.Send(EncryptedData);
 
                 //HmacPart
-                byte[] HmacValue = new byte[16];
-                HmacValue = applyHMACwithSHA256(fileBytesSlice, HMAC_buffer);
-                whatSocket.Send(HmacValue);
+                try
+                {
+                    byte[] HmacValue = new byte[32];
+                    HmacValue = applyHMACwithSHA256(fileBytesSlice, HMAC_buffer);
+                    whatSocket.Send(HmacValue);
+                }
+                catch
+                {
+                    byte[] HmacValue = new byte[32];
+                    HmacValue = string_to_bytes("HMAC_CATCH_ERRORHMAC_CATCH_ERROR");
+                    whatSocket.Send(HmacValue);
+                    break;
+                }
 
                 
             }
@@ -562,6 +614,11 @@ namespace Server
 
                             logs.AppendText("Started receiving " + filename + " from client with size of " + inputFileSizeString + ".\n");
 
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                            {
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                            }
+
                             var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
                             bool totalVerify = true;
                             while (true)
@@ -625,10 +682,19 @@ namespace Server
 
                                 server_replicates.Add(filename);
 
-                                if (remoteConnected)
+                                if (connected_servers.Count == 2)
                                 {
-                                    send_replicate(remoteSocket, filename, Master_pub);
-                                    server_replicates.Remove(filename);
+                                    try
+                                    {
+                                        send_replicate(remoteSocket, filename, Master_pub);
+                                        send_replicate(server2Socket, filename, Server2_pub);
+                                        server_replicates.Remove(filename);
+                                    }
+                                    catch
+                                    {
+                                        logs.AppendText("There is an error in replication process \n");
+                                        server_replicates.Remove(filename);
+                                    }
                                 }
                                 
                               
@@ -877,6 +943,11 @@ namespace Server
 
                         logs.AppendText("Started receiving " + filename + " from " + user + " with size of " + inputFileSizeString + ".\n");
 
+                        if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                        {
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                        }
+
                         var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
 
                         bool totalVerify = true;
@@ -911,11 +982,24 @@ namespace Server
                             byte[] HmacValue = new byte[32];
                             remoteSocket.Receive(HmacValue);
 
-                            byte[] HmacServer1 = new byte[16];
+                            byte[] HmacServer1 = new byte[32];
 
+                            if (bytes_to_string(HmacValue) == "HMAC_CATCH_ERRORHMAC_CATCH_ERROR")
+                            {
+                                hmacValue = false;
+                                break;
+                            }
                             //Byte[] HMAC_buffer2 = string_to_bytes("eeee");
 
-                            HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+                            try
+                            {
+                                HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+                            }
+                            catch
+                            {
+                                hmacValue = false;
+                                break;
+                            }
 
                             if (generateHexStringFromByteArray(HmacServer1) != generateHexStringFromByteArray(HmacValue))
                             {
@@ -974,7 +1058,9 @@ namespace Server
                         logs.AppendText("Disconnected from Master. \n");
                     }
 
+                    connectButton.Enabled = true;
                     remoteSocket.Close();
+                    connected_servers.Remove("master");
                     remoteConnected = false;
                 }
             }
@@ -992,6 +1078,44 @@ namespace Server
                     server2Socket.Receive(buffer);
 
                     string message = bytes_to_string(buffer);
+
+                    if (message == "HmacErrSer1")
+                    {
+
+                        Byte[] buffer2 = new Byte[384];
+                        server2Socket.Receive(buffer2);
+
+                        bool value = verifyWithRSA(buffer, 3072, Server2_pub, buffer2);
+
+                        if (value == true)
+                        {
+                            logs.AppendText("File Replication Hmac Error from Server2 \n");
+                            logs.AppendText("file was unsuccesfully sent and Message verified with RSA 3072. \n");
+                        }
+                        else
+                        {
+                            logs.AppendText("Signature Verification was failed \n");
+                        }
+                    }
+                    if (message == "HmacVerSer1")
+                    {
+                        Byte[] buffer2 = new Byte[384];
+                        server2Socket.Receive(buffer2);
+
+                        bool value = verifyWithRSA(buffer, 3072, Server2_pub, buffer2);
+
+                        if (value == true)
+                        {
+                            logs.AppendText("File Replication Hmac Verified from Server2 \n");
+                            logs.AppendText("file was succesfully sent and Message verified with RSA 3072. \n");
+                        }
+                        else
+                        {
+                            logs.AppendText("Signature Verification was failed \n");
+                        }
+
+                    }
+
                     if (message == "")
                     {
                         server2Connected = false;
@@ -1033,9 +1157,15 @@ namespace Server
 
                         logs.AppendText("Started receiving " + filename + " from " + user + " with size of " + inputFileSizeString + ".\n");
 
+                        if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                        {
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                        }
+
                         var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
 
                         bool totalVerify = true;
+                        bool hmacValue = true;
                         while (true)
                         {
                             byte[] combinedDataInputHeaderEncrypted = new byte[16];
@@ -1062,7 +1192,36 @@ namespace Server
                             }
                             if (bytes_to_string(fileContentByte) == "*--END--*") break;
 
+                            logs.AppendText("Server1 Hmackey from server2: " + generateHexStringFromByteArray(HMAC_buffer) + "\n");
 
+                            byte[] HmacValue = new byte[32];
+                            server2Socket.Receive(HmacValue);
+
+                            byte[] HmacServer1 = new byte[32];
+
+                            if (bytes_to_string(HmacValue) == "HMAC_CATCH_ERRORHMAC_CATCH_ERROR")
+                            {
+                                hmacValue = false;
+                                break;
+                            }
+                            //Byte[] HMAC_buffer2 = string_to_bytes("eeee");
+
+                            try
+                            {
+                                HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+                            }
+                            catch
+                            {
+                                hmacValue = false;
+                                break;
+                            }
+
+                            if (generateHexStringFromByteArray(HmacServer1) != generateHexStringFromByteArray(HmacValue))
+                            {
+                                hmacValue = false;
+                            }
+
+                            
 
                             stream.Write(fileContentByte, 0, fileContentByte.Length);
                         }
@@ -1074,11 +1233,34 @@ namespace Server
                             logs.AppendText("There is an error in verification for the file:" + filename + "\n");
                             File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                         }
+                        else if (hmacValue == false)
+                        {
+                            logs.AppendText("There is an ERROR IN HMAC: \n");
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                            {
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                            }
 
+                            string messageError = "HmacErrSer2";
+                            byte[] messageByte = new byte[11];
+                            messageByte = string_to_bytes(messageError);
+                            server2Socket.Send(messageByte);
+
+                            byte[] signMessageError = signWithRSA(messageByte, 3072, Server1_pub_priv);
+                            server2Socket.Send(signMessageError);
+                        }
                         else
                         {
                             logs.AppendText("All file packets for the " + filename + " file was succesfully verified. \n");
                             logs.AppendText(filename + " was succesfully received and stored in the File Sytem. \n");
+
+                            string messageError = "HmacVerSer2";
+                            byte[] messageByte = new byte[11];
+                            messageByte = string_to_bytes(messageError);
+                            server2Socket.Send(messageByte);
+
+                            byte[] signMessageError = signWithRSA(messageByte, 3072, Server1_pub_priv);
+                            server2Socket.Send(signMessageError);
                         }
 
                     }
@@ -1091,7 +1273,9 @@ namespace Server
                         logs.AppendText("Disconnected from Server2. \n");
                     }
 
+                    connectButton2.Enabled = true;
                     server2Socket.Close();
+                    connected_servers.Remove("Server2");
                     server2Connected = false;
                 }
             }
@@ -1187,9 +1371,46 @@ namespace Server
 
                             logs.AppendText("Connected to Master \n");
 
-                            for (int i = 0; i < server_replicates.Count; i++)
+                            ServerSocketList.Add(remoteSocket);
+                            AllSocketList.Add(remoteSocket);
+                            Users.Add("Master");
+                            logs.AppendText("Master Server is connected. \n");
+
+                            connected_servers.Add("master");
+
+                            List<string> sent_files = new List<string>();
+                            List<string> sent_files_1 = new List<string>();
+                            try
                             {
-                                send_replicate(remoteSocket, server_replicates[i], Master_pub);
+                                if (connected_servers.Count == 2)
+                                {
+                                    for (int i = 0; i < server_replicates.Count; i++)
+                                    {
+                                        send_replicate(remoteSocket, server_replicates[i], Master_pub);
+                                        send_replicate(server2Socket, server_replicates[i], Server2_pub);
+                                        sent_files.Add(server_replicates[i]);
+                                    }
+                                }
+
+                                /*
+                                for (int i = 0; i < server1_replicates.Count; i++)
+                                {                                    
+                                    send_replicate(server1Socket, server1_replicates[i], Server1_pub);
+                                    sent_files_1.Add(server_replicates[i]);                                
+                                } */
+                            }
+                            finally
+                            {
+                                for (int i = 0; i < sent_files.Count; i++)
+                                {
+                                    server_replicates.Remove(sent_files[i]);
+                                }
+
+                                /*
+                                for (int i = 0; i < sent_files_1.Count; i++)
+                                {
+                                    server1_replicates.Remove(sent_files_1[i]);
+                                }*/
                             }
 
                             Thread masterThread;
@@ -1216,6 +1437,8 @@ namespace Server
         {
             listening = false;
             terminating = true;
+
+            save_Queue();
 
             for (int i = 0; i < socketList.Count; i++)
             {
@@ -1272,6 +1495,49 @@ namespace Server
                         server2Socket = socket2;
                         logs.AppendText("Connected to Server2 \n");
 
+                        ServerSocketList.Add(server2Socket);
+                        AllSocketList.Add(server2Socket);
+                        Users.Add("Server2");
+                        logs.AppendText("Server2 is connected. \n");
+
+                        connected_servers.Add("Server2");
+
+                        List<string> sent_files = new List<string>();
+                        List<string> sent_files_1 = new List<string>();
+                        try
+                        {
+                            if (connected_servers.Count == 2)
+                            {
+                                for (int i = 0; i < server_replicates.Count; i++)
+                                {
+                                    send_replicate(remoteSocket, server_replicates[i], Master_pub);
+                                    send_replicate(server2Socket, server_replicates[i], Server2_pub);
+                                    sent_files.Add(server_replicates[i]);
+                                }
+                            }
+
+                            /*
+                            for (int i = 0; i < server1_replicates.Count; i++)
+                            {                                    
+                                send_replicate(server1Socket, server1_replicates[i], Server1_pub);
+                                sent_files_1.Add(server_replicates[i]);                                
+                            } */
+                        }
+                        finally
+                        {
+                            for (int i = 0; i < sent_files.Count; i++)
+                            {
+                                server_replicates.Remove(sent_files[i]);
+                            }
+
+                            /*
+                            for (int i = 0; i < sent_files_1.Count; i++)
+                            {
+                                server1_replicates.Remove(sent_files_1[i]);
+                            }*/
+                        }
+
+
                         Thread serverThread;
                         serverThread = new Thread(new ThreadStart(server2Receive));
                         serverThread.Start();
@@ -1314,10 +1580,6 @@ namespace Server
 
                             logs.AppendText("Connected to Master \n");
 
-                            for (int i = 0; i < server_replicates.Count; i++)
-                            {
-                                send_replicate(remoteSocket, server_replicates[i], Master_pub);
-                            }
 
                             Thread masterThread;
                             masterThread = new Thread(new ThreadStart(MasterReceive));
