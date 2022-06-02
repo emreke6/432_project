@@ -59,7 +59,16 @@ namespace RemoteServer_project
         {
             string portnum = port.Text;
             int port_num;
-            
+
+            using (var reader = new StreamReader("Queue.txt"))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    server_replicates.Add(line);
+                }
+            }
+
             if (Int32.TryParse(portnum, out port_num))
             {
                 serverSocket.Bind(new IPEndPoint(IPAddress.Any, port_num));
@@ -323,8 +332,9 @@ namespace RemoteServer_project
         }
         //FUNCTIONS PART END
 
+        
         //NICE FUNCTIONS START
-        void save_Queue()
+        /*void save_Queue()
         {
             using (StreamWriter writer = new StreamWriter("Queue.txt"))
             {
@@ -334,7 +344,7 @@ namespace RemoteServer_project
                     writer.WriteLine(server_replicates[i]);
                 }
             }
-        }
+        }*/
 
         void send_replicate(Socket inputSocket, string filename, string connected_what)
         {
@@ -1446,10 +1456,17 @@ namespace RemoteServer_project
             listening = false;
             terminating = true;
 
-            save_Queue();
             for (int i = 0; i < AllSocketList.Count; i++)
             {
                 AllSocketList[i].Close();
+            }
+
+            using (StreamWriter writer = new StreamWriter("Queue.txt"))
+            {
+                for (int i = 0; i < server_replicates.Count; i++)
+                {
+                    writer.WriteLine(server_replicates[i]);
+                }
             }
 
             Environment.Exit(0);

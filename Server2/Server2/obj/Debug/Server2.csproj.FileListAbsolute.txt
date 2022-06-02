@@ -103,3 +103,14 @@ C:\Users\eyupb\Desktop\Step1\432_project\Server2\Server2\obj\Debug\Server2.cspro
 C:\Users\eyupb\Desktop\Step1\432_project\Server2\Server2\obj\Debug\Server2.Form1.resources
 C:\Users\eyupb\Desktop\Step1\432_project\Server2\Server2\obj\Debug\Server2.Properties.Resources.resources
 C:\Users\eyupb\Desktop\Step1\432_project\Server2\Server2\obj\Debug\Server2.csproj.GenerateResource.Cache
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\bin\Debug\Server2.exe.config
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\bin\Debug\Server2.exe
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\bin\Debug\Server2.pdb
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\obj\Debug\Server2.csproj.AssemblyReference.cache
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\obj\Debug\Server2.csproj.SuggestedBindingRedirects.cache
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\obj\Debug\Server2.Form1.resources
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\obj\Debug\Server2.Properties.Resources.resources
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\obj\Debug\Server2.csproj.GenerateResource.cache
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\obj\Debug\Server2.csproj.CoreCompileInputs.cache
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\obj\Debug\Server2.exe
+C:\Users\lenovo\Desktop\432_project\Server2\Server2\obj\Debug\Server2.pdb

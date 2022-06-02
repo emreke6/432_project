@@ -55,6 +55,16 @@ namespace Server
             int serverPort;
             Thread acceptThread;
 
+            using (var reader = new StreamReader("Queue.txt"))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    server_replicates.Add(line);
+
+                }
+            }
+
             if (Int32.TryParse(clientPort.Text, out serverPort))
             {
                 serverSocket.Bind(new IPEndPoint(IPAddress.Any, serverPort));
@@ -1441,11 +1451,18 @@ namespace Server
             listening = false;
             terminating = true;
 
-            save_Queue();
-
             for (int i = 0; i < socketList.Count; i++)
             {
                 socketList[i].Close();
+            }
+
+            using (StreamWriter writer = new StreamWriter("Queue.txt"))
+            {
+                Console.WriteLine("BURDA. \n");
+                for (int i = 0; i < server_replicates.Count; i++)
+                {
+                    writer.WriteLine(server_replicates[i]);
+                }
             }
             Environment.Exit(0);
         }
