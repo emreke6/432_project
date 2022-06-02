@@ -448,6 +448,20 @@ namespace Client_project
 
                     if (bytes_to_string(fileSignedInputSizeEncrypted) == "Decryption_Error")
                     {
+                        Byte[] buffer2 = new Byte[384];
+                        clientSocket.Receive(buffer2);
+
+                        bool value = verifyWithRSA(fileSignedInputSizeEncrypted, 3072, connected_pub, buffer2);
+
+                        if (value == true)
+                        {
+                            logs.AppendText("Verification of signed message was succesful \n");
+                        }
+                        else 
+                        {
+                            logs.AppendText("Verification of signed message was failed \n");
+                        }
+
                         logs.AppendText("There is decryption error in server");
                         decryptionerror = true;
                         break;
@@ -464,6 +478,20 @@ namespace Client_project
 
                     if (bytes_to_string(fileSignedInput) == "Decryption_Error")
                     {
+                        Byte[] buffer2 = new Byte[384];
+                        clientSocket.Receive(buffer2);
+
+                        bool value = verifyWithRSA(fileSignedInputSizeEncrypted, 3072, connected_pub, buffer2);
+
+                        if (value == true)
+                        {
+                            logs.AppendText("Verification of signed message was succesful \n");
+                        }
+                        else
+                        {
+                            logs.AppendText("Verification of signed message was failed \n");
+                        }
+
                         logs.AppendText("There is decryption error in server");
                         decryptionerror = true;
                         break;

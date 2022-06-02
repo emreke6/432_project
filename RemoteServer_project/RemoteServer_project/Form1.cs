@@ -1294,6 +1294,9 @@ namespace RemoteServer_project
                             byte[] messageByte = new byte[16];
                             messageByte = string_to_bytes(messageError);
                             s.Send(messageByte);
+
+                            byte[] signMessageError = signWithRSA(messageByte, 3072, Master_pub_priv);
+                            s.Send(signMessageError);
                         }
                         
                         
