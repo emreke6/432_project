@@ -35,11 +35,18 @@ namespace RemoteServer_project
         string Server1_pub;
         string Server2_pub;
 
+        byte[] randomBytes = new byte[48];
+
         Byte[] server1_key = new Byte[16];
         Byte[] server1_iv = new Byte[16];
 
         Byte[] server2_key = new Byte[16];
         Byte[] server2_iv = new Byte[16];
+
+        Byte[] aes_key_buffer = new Byte[16];
+        Byte[] aes_iv_buffer = new Byte[16];
+        Byte[] HMAC_buffer = new Byte[16];
+        Byte[] HMAC_buffer2;
 
         public Form1()
         {
@@ -65,6 +72,14 @@ namespace RemoteServer_project
 
                 logs.AppendText("Started listening. \n");
 
+                HMAC_buffer2 = string_to_bytes("eeee");
+
+                randomBytes = GenerateRandomBytes(48);
+                
+
+                Array.Copy(randomBytes, 0, aes_key_buffer, 0, 16);
+                Array.Copy(randomBytes, 16, aes_iv_buffer, 0, 16);
+                Array.Copy(randomBytes, 32, HMAC_buffer, 0, 16);
                 
                 using (System.IO.StreamReader fileReader =
                 new System.IO.StreamReader("MasterServer_pub_prv.txt"))
@@ -291,7 +306,14 @@ namespace RemoteServer_project
 
             return combinedEncryptedData;
         }
+        static byte[] applyHMACwithSHA256(byte[] byteInput, byte[] key)
+        {
+            HMACSHA256 hmacSHA256 = new HMACSHA256(key);
+            // get the result of HMAC operation
+            byte[] result = hmacSHA256.ComputeHash(byteInput);
 
+            return result;
+        }
         private byte[] parse_array(byte[] arr, int idx1, int len)
         {
             int lenMin = (arr.Length - idx1) < len ? (arr.Length - idx1) : len;
@@ -305,20 +327,16 @@ namespace RemoteServer_project
         void send_replicate(Socket inputSocket, string filename, string connected_what)
         {
             //FOR PROJECT PART 2 //
-            byte[] aes_key_buffer = new byte[16];
-            byte[] aes_iv_buffer = new byte[16];
 
             Socket whatSocket = inputSocket;
             if(connected_what == Server1_pub)
             {
-                Array.Copy(server1_key, 0, aes_key_buffer, 0, 16);
-                Array.Copy(server1_iv, 0, aes_iv_buffer, 0, 16);
+                logs.AppendText("MASTER Hmac of Server1:" + generateHexStringFromByteArray(server1_hmac) + "\n");
             }
 
             if (connected_what == Server2_pub)
             {
-                Array.Copy(server2_key, 0, aes_key_buffer, 0, 16);
-                Array.Copy(server2_iv, 0, aes_iv_buffer, 0, 16);
+                logs.AppendText("MASTER Hmac of Server2:" + generateHexStringFromByteArray(server2_hmac) + "\n");
             }
 
             string connected_pub = connected_what;
@@ -332,9 +350,6 @@ namespace RemoteServer_project
             logs.AppendText(filename + " with size of " + fileBytes.Length.ToString() + " is being sent. \n");
 
 
-
-            byte[] keyRsaEncrypted = encryptWithRSA(aes_key_buffer, 3072, connected_pub);
-            byte[] IVRsaEncrypted = encryptWithRSA(aes_iv_buffer, 3072, connected_pub);
             string operation = "file_replic";
             byte[] operationBytes = new byte[11];
             operationBytes = string_to_bytes(operation);
@@ -343,9 +358,6 @@ namespace RemoteServer_project
 
             int mb = 8192;
 
-            byte[] combinedEncryptedKey = new byte[768];
-            combinedEncryptedKey = combine_byte_arrays(keyRsaEncrypted, IVRsaEncrypted);
-            whatSocket.Send(combinedEncryptedKey);
             byte[] fileNameByte = string_to_bytes(filename);
             byte[] filenameAesEncrypted = encryptWithAES128(fileNameByte, aes_key_buffer, aes_iv_buffer);
 
@@ -375,6 +387,12 @@ namespace RemoteServer_project
                 //remoteSocket.SendBufferSize = EncryptedData.Length;
 
                 whatSocket.Send(EncryptedData);
+
+                //HMAC PART
+
+                byte[] HmacValue = new byte[16];
+                HmacValue = applyHMACwithSHA256(fileBytesSlice, HMAC_buffer);
+                whatSocket.Send(HmacValue);
             }
 
 
@@ -407,7 +425,7 @@ namespace RemoteServer_project
                 whatSocket.Send(endTokenLengthEncrypted);
                 whatSocket.Send(endTokenEncrypted);
 
-                logs.AppendText(filename + " was succesfully sent. \n");
+                
 
             }
 
@@ -457,8 +475,7 @@ namespace RemoteServer_project
                         Users.Add("Server1");
                         logs.AppendText("Server1 is connected. \n");
                         newClient.Send(whoamiByte);
-                        byte[] randomBytes = new byte[48];
-                        randomBytes = GenerateRandomBytes(48);
+                        
 
                         byte[] encryptedRSA = encryptWithRSA(randomBytes, 3072, Server1_pub);
                         byte[] sessionKeySigned = signWithRSA(encryptedRSA, 3072, Master_pub_priv);
@@ -534,8 +551,6 @@ namespace RemoteServer_project
                         Users.Add("Server2");
                         logs.AppendText("Server 2 is connected. \n");
                         newClient.Send(whoamiByte);
-                        byte[] randomBytes = new byte[48];
-                        randomBytes = GenerateRandomBytes(48);
 
                         byte[] encryptedRSA = encryptWithRSA(randomBytes, 3072, Server2_pub);
                         byte[] sessionKeySigned = signWithRSA(encryptedRSA, 3072, Master_pub_priv);
@@ -633,6 +648,43 @@ namespace RemoteServer_project
                     server1Socket.Receive(buffer);
 
                     string message = bytes_to_string(buffer);
+                    if (message == "HmacErrMast")
+                    {
+
+                        Byte[] buffer2 = new Byte[384];
+                        server1Socket.Receive(buffer2);
+
+                        bool value = verifyWithRSA(buffer,3072,Server1_pub,buffer2);
+
+                        if (value == true)
+                        {
+                            logs.AppendText("File Replication Hmac Error from Server1 \n");
+                            logs.AppendText("file was unsuccesfully sent and Message verified with RSA 3072. \n");
+                        }
+                        else
+                        {
+                            logs.AppendText("Signature Verification was failed \n");
+                        }
+                    }
+                    if (message == "HmacVerMast")
+                    {
+                        Byte[] buffer2 = new Byte[384];
+                        server1Socket.Receive(buffer2);
+
+                        bool value = verifyWithRSA(buffer, 3072, Server1_pub, buffer2);
+
+                        if (value == true)
+                        {
+                            logs.AppendText("File Replication Hmac Verified from Server1 \n");
+                            logs.AppendText("file was succesfully sent and Message verified with RSA 3072. \n");
+                        }
+                        else
+                        {
+                            logs.AppendText("Signature Verification was failed \n");
+                        }
+
+                    }
+
                     if (message == "")
                     {
                         server1connected = false;
@@ -645,16 +697,10 @@ namespace RemoteServer_project
 
                         string filename = "";
 
-                        Byte[] combinedKeyInput = new Byte[768];
-                        server1Socket.Receive(combinedKeyInput);
-
-                        byte[] AESKeyEncrypted = new byte[384];
-                        Array.Copy(combinedKeyInput, 0, AESKeyEncrypted, 0, 384);
-                        byte[] AESIVEncrypted = new byte[384];
-                        Array.Copy(combinedKeyInput, 384, AESIVEncrypted, 0, 384);
-
-                        byte[] AESKey = decryptWithRSA(AESKeyEncrypted, 3072, Master_pub_priv);
-                        byte[] AESIV = decryptWithRSA(AESIVEncrypted, 3072, Master_pub_priv);
+                        byte[] AESKey = new byte[16];
+                        Array.Copy(aes_key_buffer, 0, AESKey, 0, 16);
+                        byte[] AESIV = new byte[16];
+                        Array.Copy(aes_iv_buffer, 0, AESIV, 0, 16);
 
                         logs.AppendText("\n\nKey and IV created for aes128 encryption:\n");
                         logs.AppendText("Key: " + generateHexStringFromByteArray(AESKey) + "\n");
@@ -683,6 +729,7 @@ namespace RemoteServer_project
                         var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
 
                         bool totalVerify = true;
+                        bool hmacValue = true;
                         while (true)
                         {
                             byte[] combinedDataInputHeaderEncrypted = new byte[16];
@@ -709,6 +756,23 @@ namespace RemoteServer_project
                             }
                             if (bytes_to_string(fileContentByte) == "*--END--*") break;
 
+                            //FOR HMAC BEGIN
+                            logs.AppendText("Master HmacKey from server1: " + generateHexStringFromByteArray(HMAC_buffer) + "\n");
+                            byte[] HmacValue = new byte[32];
+                            server1Socket.Receive(HmacValue);
+
+                            byte[] HmacServer1 = new byte[16];
+
+                            //Byte[] HMAC_buffer2 = string_to_bytes("eeee");
+
+                            HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+
+                            if (generateHexStringFromByteArray(HmacServer1) != generateHexStringFromByteArray(HmacValue))
+                            {
+                                hmacValue = false;
+                            }
+                            //FOR HMAC END
+
                             stream.Write(fileContentByte, 0, fileContentByte.Length);
                         }
 
@@ -717,13 +781,43 @@ namespace RemoteServer_project
                         if (totalVerify == false)
                         {
                             logs.AppendText("There is an error in verification for the file:" + filename + "\n");
-                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                         }
+                        else if (hmacValue == false)
+                        {
+                            //FOR HMAC BEGIN
+                            logs.AppendText("There is an ERROR IN HMAC: \n");
 
+                            string path = Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename;
+                            logs.AppendText("Path: " + path + "\n");
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                            {
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                            }
+
+                            string messageError = "HmacErrSer1";
+                            byte[] messageByte = new byte[11];
+                            messageByte = string_to_bytes(messageError);
+                            server1Socket.Send(messageByte);
+
+                            byte[] signMessageError = signWithRSA(messageByte, 3072, Master_pub_priv);
+                            server1Socket.Send(signMessageError);
+                            //FOR HMAC END
+                        }
                         else
                         {
                             logs.AppendText("All file packets for the " + filename + " file was succesfully verified. \n");
                             logs.AppendText(filename + " was succesfully received and stored in the File Sytem. \n");
+
+                            //FOR HMAC
+                            string messageError = "HmacVerSer1";
+                            byte[] messageByte = new byte[11];
+                            messageByte = string_to_bytes(messageError);
+                            server1Socket.Send(messageByte);
+
+                            byte[] signMessageError = signWithRSA(messageByte, 3072, Master_pub_priv);
+                            server1Socket.Send(signMessageError);
+                            //FOR HMAC END
 
                             server2_replicates.Add(filename);
                             if (connected_servers.Contains("Server2"))
@@ -771,6 +865,44 @@ namespace RemoteServer_project
                     server2Socket.Receive(buffer);
 
                     string message = bytes_to_string(buffer);
+                    if (message == "HmacErrMast")
+                    {
+
+                        Byte[] buffer2 = new Byte[384];
+                        server1Socket.Receive(buffer2);
+
+                        bool value = verifyWithRSA(buffer, 3072, Server2_pub, buffer2);
+
+                        if (value == true)
+                        {
+                            logs.AppendText("File Replication Hmac Error from Server2 \n");
+                            logs.AppendText("file was unsuccesfully sent and Message verified with RSA 3072. \n");
+                        }
+                        else
+                        {
+                            logs.AppendText("Signature Verification was failed \n");
+                        }
+                    }
+                    if (message == "HmacVerMast")
+                    {
+                        Byte[] buffer2 = new Byte[384];
+                        server1Socket.Receive(buffer2);
+
+                        bool value = verifyWithRSA(buffer, 3072, Server2_pub, buffer2);
+
+                        if (value == true)
+                        {
+                            logs.AppendText("File Replication Hmac Verified from Server2 \n");
+                            logs.AppendText("file was succesfully sent and Message verified with RSA 3072. \n");
+                        }
+                        else
+                        {
+                            logs.AppendText("Signature Verification was failed \n");
+                        }
+
+                    }
+
+
                     if (message == "")
                     {
                         server2connected = false;
@@ -783,16 +915,10 @@ namespace RemoteServer_project
 
                         string filename = "";
 
-                        Byte[] combinedKeyInput = new Byte[768];
-                        server2Socket.Receive(combinedKeyInput);
-
-                        byte[] AESKeyEncrypted = new byte[384];
-                        Array.Copy(combinedKeyInput, 0, AESKeyEncrypted, 0, 384);
-                        byte[] AESIVEncrypted = new byte[384];
-                        Array.Copy(combinedKeyInput, 384, AESIVEncrypted, 0, 384);
-
-                        byte[] AESKey = decryptWithRSA(AESKeyEncrypted, 3072, Master_pub_priv);
-                        byte[] AESIV = decryptWithRSA(AESIVEncrypted, 3072, Master_pub_priv);
+                        byte[] AESKey = new byte[16];
+                        Array.Copy(aes_key_buffer, 0, AESKey, 0, 16);
+                        byte[] AESIV = new byte[16];
+                        Array.Copy(aes_iv_buffer, 0, AESIV, 0, 16);
 
                         logs.AppendText("\n\nKey and IV created for aes128 encryption:\n");
                         logs.AppendText("Key: " + generateHexStringFromByteArray(AESKey) + "\n");
@@ -821,6 +947,7 @@ namespace RemoteServer_project
                         var stream = new FileStream(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename, FileMode.Append);
 
                         bool totalVerify = true;
+                        bool hmacValue = true;
                         while (true)
                         {
                             byte[] combinedDataInputHeaderEncrypted = new byte[16];
@@ -850,6 +977,23 @@ namespace RemoteServer_project
                             }
                             if (bytes_to_string(fileContentByte) == "*--END--*") break;
 
+                            logs.AppendText("Master HmacKey from server2: " + generateHexStringFromByteArray(HMAC_buffer) + "\n");
+                            byte[] HmacValue = new byte[32];
+                            server2Socket.Receive(HmacValue);
+
+                            byte[] HmacServer1 = new byte[16];
+
+                            //Byte[] HMAC_buffer2 = string_to_bytes("eeee");
+
+                            HmacServer1 = applyHMACwithSHA256(fileContentByte, HMAC_buffer);
+
+                            if (generateHexStringFromByteArray(HmacServer1) != generateHexStringFromByteArray(HmacValue))
+                            {
+                                hmacValue = false;
+                            }
+                            
+
+
                             stream.Write(fileContentByte, 0, fileContentByte.Length);
                         }
 
@@ -858,13 +1002,39 @@ namespace RemoteServer_project
                         if (totalVerify == false)
                         {
                             logs.AppendText("There is an error in verification for the file:" + filename + "\n");
-                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                            File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                         }
+                        else if (hmacValue == false)
+                        {
+                            logs.AppendText("There is an ERROR IN HMAC: \n");
 
+                            string path = Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename;
+                            logs.AppendText("Path: " + path + "\n");
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
+                            {
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
+                            }
+
+                            string messageError = "HmacErrSer2";
+                            byte[] messageByte = new byte[11];
+                            messageByte = string_to_bytes(messageError);
+                            server2Socket.Send(messageByte);
+
+                            byte[] signMessageError = signWithRSA(messageByte, 3072, Master_pub_priv);
+                            server2Socket.Send(signMessageError);
+                        }
                         else
                         {
                             logs.AppendText("All file packets for the " + filename + " file was succesfully verified. \n");
                             logs.AppendText(filename + " was succesfully received and stored in the File Sytem. \n");
+
+                            string messageError = "HmacVerSer2";
+                            byte[] messageByte = new byte[11];
+                            messageByte = string_to_bytes(messageError);
+                            server2Socket.Send(messageByte);
+
+                            byte[] signMessageError = signWithRSA(messageByte, 3072, Master_pub_priv);
+                            server2Socket.Send(signMessageError);
 
                             server1_replicates.Add(filename);
                             if (connected_servers.Contains("Server1"))
@@ -1013,7 +1183,7 @@ namespace RemoteServer_project
                             if (totalVerify == false)
                             {
                                 logs.AppendText("There is an error in verification for the file:" + filename + "\n");
-                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                             }
 
                             else
@@ -1026,18 +1196,26 @@ namespace RemoteServer_project
 
                                 if (connected_servers.Count == 2)
                                 {
-                                    send_replicate(server1Socket, filename, Server1_pub);
-                                    send_replicate(server2Socket, filename, Server2_pub);
-                                    server_replicates.Remove(filename);
+                                    try
+                                    {
+                                        send_replicate(server1Socket, filename, Server1_pub);
+                                        send_replicate(server2Socket, filename, Server2_pub);
+                                        server_replicates.Remove(filename);
+                                    }
+                                    catch
+                                    {
+                                        logs.AppendText("There is an error in replication process \n");
+                                        server_replicates.Remove(filename);
+                                    }
                                 }
                             }
                         }
                         catch 
                         {
                             logs.AppendText("There is an error in decryption process for the file \n");
-                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename))
+                            if (File.Exists(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename))
                             {
-                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceievedFiles\\" + filename);
+                                File.Delete(Directory.GetCurrentDirectory() + "\\ReceivedFiles\\" + filename);
                             }
                             string messageError = "Decryption_Error";
                             byte[] messageByte = new byte[16];
